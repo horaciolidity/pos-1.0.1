@@ -1,39 +1,120 @@
+/* Estilos Generales */
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
 }
 
+h1, h2 {
+    text-align: center;
+    color: #333;
+}
+
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+section {
+    margin-bottom: 30px;
+}
+
+/* Formularios */
 #product-form, #product-search, #checkout {
-    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
-#product-form input, #product-search input, #checkout input {
-    margin-right: 10px;
-    padding: 5px;
+input[type="text"], input[type="number"] {
+    flex: 1;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
 }
 
-#product-form button, #product-search button, #checkout button {
-    padding: 5px 10px;
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-#product-list, #checkout {
-    margin-top: 20px;
+button:hover {
+    background-color: #0056b3;
 }
 
-#product-list ul, #checkout ul {
+/* Listas */
+ul {
     list-style-type: none;
     padding: 0;
 }
 
-#product-list li, #checkout li {
-    margin: 5px 0;
-    padding: 10px;
-    border: 1px solid #ccc;
+li {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
 }
 
+li:last-child {
+    border-bottom: none;
+}
+
+span {
+    flex: 1;
+    margin-right: 10px;
+}
+
+/* Carrito */
+#checkout p {
+    text-align: right;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+}
+
+#total-price {
+    color: #28a745;
+}
+
+/* Resultados de búsqueda */
+#product-result p {
+    margin: 10px 0;
+}
+
+#product-result button {
+    margin-top: 10px;
+}
+
+/* Botones de acción en la lista de productos */
 #product-list button, #checkout button {
     padding: 5px 10px;
+    background-color: #dc3545;
+    margin-left: 5px;
+}
+
+#product-list button:hover, #checkout button:hover {
+    background-color: #c82333;
+}
+
+#product-list button:nth-child(2), #checkout button:nth-child(2) {
+    background-color: #28a745;
+}
+
+#product-list button:nth-child(2):hover, #checkout button:nth-child(2):hover {
+    background-color: #218838;
 }
