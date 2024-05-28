@@ -126,3 +126,17 @@ function checkout() {
     document.getElementById('total-price').textContent = '0.00';
     alert('Compra finalizada');
 }
+
+
+ const consultarButton = document.querySelector('.action-button:nth-child(1)');
+ const limpiarButton = document.querySelector('.action-button:nth-child(2)');
+
+    consultarButton.addEventListener('click', () => {
+        // Lógica para consultar el total vendido
+        console.log('Consultar Total Vendido');
+    });
+
+    limpiarButton.addEventListener('click', () => {
+        // Lógica para limpiar el total vendido
+        console.log('Limpiar Total Vendido');
+    });
