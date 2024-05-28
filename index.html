@@ -7,23 +7,25 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-        <div class="container">
+    <div class="container">
+        <div class="header">
+            <h1>Almacenes Jose</h1>
+            <button class="action-button" onclick="consultarTotalVendido()">Consultar Total Vendido</button>
+            <button class="action-button" onclick="limpiarTotalVendido()">Limpiar Total Vendido</button>
+        </div>
 
-   <h1>Almacenes Jose</h1>
-       
-        
         <section id="product-form">
             <input type="text" id="product-code" placeholder="Código de Barras">
             <input type="text" id="product-name" placeholder="Nombre del Producto">
             <input type="number" id="product-price" placeholder="Precio">
             <button onclick="addProduct()">Agregar Producto</button>
         </section>
-        
+
         <section id="product-search">
             <input type="text" id="search-code" placeholder="Buscar por Código">
             <button onclick="searchProduct()">Buscar</button>
         </section>
-        
+
         <div id="product-result"></div>
 
         <section id="checkout">
@@ -35,11 +37,6 @@
             <button onclick="checkout()">Finalizar Compra</button>
         </section>
 
-    
-         <button class="action-button">Consultar Total Vendido</button>
-        <button class="action-button">Limpiar Total Vendido</button>
-
-    
         <section id="product-list">
             <h2>Lista de Productos</h2>
             <ul id="products"></ul>
