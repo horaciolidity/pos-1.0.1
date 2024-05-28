@@ -15,7 +15,7 @@ function addProduct() {
     const code = document.getElementById('product-code').value.trim();
     const name = document.getElementById('product-name').value.trim();
     const price = document.getElementById('product-price').value.trim();
-    
+
     if (code && name && price) {
         const products = getProducts();
         products.push({ code, name, price: parseFloat(price) });
@@ -122,36 +122,26 @@ function updateTotalPrice() {
 }
 
 function checkout() {
-    const totalVendido = parseFloat(document.getElementById('total-price').textContent);
-    updateTotalVendido(totalVendido);
+    const total = parseFloat(document.getElementById('total-price').textContent);
+    let totalVendido = parseFloat(localStorage.getItem('totalVendido')) || 0;
+    totalVendido += total;
+    localStorage.setItem('totalVendido', totalVendido.toFixed(2));
 
     document.getElementById('cart').innerHTML = '';
     document.getElementById('total-price').textContent = '0.00';
     alert('Compra finalizada');
 }
 
-function updateTotalVendido(total) {
-    localStorage.setItem('totalVendido', total);
+function consultarTotalVendido() {
+    const totalVendido = localStorage.getItem('totalVendido');
+    if (totalVendido) {
+        alert(`Total Vendido: $${totalVendido}`);
+    } else {
+        alert('No hay ventas registradas.');
+    }
 }
 
-
-
- const consultarButton = document.querySelectorAll('.action-button')[0];
-const limpiarButton = document.querySelectorAll('.action-button')[1];
-
-
-    consultarButton.addEventListener('click', () => {
-        // Lógica para consultar el total vendido
-        const totalVendido = localStorage.getItem('totalVendido');
-        if (totalVendido) {
-            alert(`Total Vendido: $${totalVendido}`);
-        } else {
-            alert('No hay ventas registradas.');
-        }
-    });
-
-    limpiarButton.addEventListener('click', () => {
-        // Lógica para limpiar el total vendido
-        localStorage.removeItem('totalVendido');
-        alert('Total Vendido limpiado para el nuevo turno.');
-    });
+function limpiarTotalVendido() {
+    localStorage.removeItem('totalVendido');
+    alert('Total Vendido limpiado para el nuevo turno.');
+}
