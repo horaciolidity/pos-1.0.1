@@ -2,6 +2,7 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #2c3e50;
+    color: #ecf0f1;
     margin: 0;
     padding: 0;
 }
@@ -17,7 +18,7 @@ h1, h2 {
     padding: 20px;
     background: #34495e;
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     animation: fadeIn 1s ease-in-out;
 }
 
@@ -38,10 +39,12 @@ input[type="text"], input[type="number"] {
     flex: 1;
     padding: 10px;
     margin: 5px 0;
-    border: 1px solid #ccc;
+    border: 1px solid #bdc3c7;
     border-radius: 5px;
     font-size: 1em;
     transition: border-color 0.3s;
+    background-color: #ecf0f1;
+    color: #2c3e50;
 }
 
 input[type="text"]:focus, input[type="number"]:focus {
@@ -81,7 +84,7 @@ li {
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #bdc3c7;
     animation: fadeInUp 0.5s ease-in-out;
 }
 
@@ -97,13 +100,14 @@ span {
 /* Carrito */
 #checkout p {
     text-align: right;
-    font-size: 1.5em;
+    font-size: 2em;
     font-weight: bold;
-    color: #333;
+    color: #ecf0f1;
 }
 
 #total-price {
     color: #28a745;
+    font-size: 2em;
 }
 
 /* Resultados de búsqueda */
@@ -169,7 +173,7 @@ ul li {
 }
 
 ul li:hover {
-    background-color: #f0f0f0;
+    background-color: #3b4d61;
     transform: scale(1.02);
 }
 
