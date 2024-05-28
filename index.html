@@ -18,12 +18,7 @@
         <input type="text" id="search-code" placeholder="Buscar por Código">
         <button onclick="searchProduct()">Buscar</button>
     </div>
-    <div id="product-result"></div>
-    <div id="product-list">
-        <h2>Lista de Productos</h2>
-        <ul id="products"></ul>
-    </div>
-    <div id="checkout">
+     <div id="checkout">
         <h2>Escanear Productos</h2>
         <input type="text" id="scan-code" placeholder="Escanear Código">
         <button onclick="scanProduct()">Añadir al Carrito</button>
@@ -31,6 +26,13 @@
         <p>Total: $<span id="total-price">0.00</span></p>
         <button onclick="checkout()">Finalizar Compra</button>
     </div>
+    
+    <div id="product-result"></div>
+    <div id="product-list">
+        <h2>Lista de Productos</h2>
+        <ul id="products"></ul>
+    </div>
+   
     <script src="scripts.js"></script>
 </body>
 </html>
