@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punto de Venta</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Punto de Venta</h1>
+    <div id="product-form">
+        <input type="text" id="product-code" placeholder="Código de Barras">
+        <input type="text" id="product-name" placeholder="Nombre del Producto">
+        <input type="number" id="product-price" placeholder="Precio">
+        <button onclick="addProduct()">Agregar Producto</button>
+    </div>
+    <div id="product-search">
+        <input type="text" id="search-code" placeholder="Buscar por Código">
+        <button onclick="searchProduct()">Buscar</button>
+    </div>
+    <div id="product-result"></div>
+    <div id="product-list">
+        <h2>Lista de Productos</h2>
+        <ul id="products"></ul>
+    </div>
+    <div id="checkout">
+        <h2>Escanear Productos</h2>
+        <input type="text" id="scan-code" placeholder="Escanear Código">
+        <button onclick="scanProduct()">Añadir al Carrito</button>
+        <ul id="cart"></ul>
+        <p>Total: $<span id="total-price">0.00</span></p>
+        <button onclick="checkout()">Finalizar Compra</button>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
