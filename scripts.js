@@ -128,8 +128,9 @@ function checkout() {
 }
 
 
- const consultarButton = document.querySelector('.action-button:nth-child(1)');
-    const limpiarButton = document.querySelector('.action-button:nth-child(2)');
+ const consultarButton = document.querySelectorAll('.action-button')[0];
+const limpiarButton = document.querySelectorAll('.action-button')[1];
+
 
     consultarButton.addEventListener('click', () => {
         // Lógica para consultar el total vendido
