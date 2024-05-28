@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+#product-form, #product-search, #checkout {
+    margin-bottom: 20px;
+}
+
+#product-form input, #product-search input, #checkout input {
+    margin-right: 10px;
+    padding: 5px;
+}
+
+#product-form button, #product-search button, #checkout button {
+    padding: 5px 10px;
+}
+
+#product-list, #checkout {
+    margin-top: 20px;
+}
+
+#product-list ul, #checkout ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#product-list li, #checkout li {
+    margin: 5px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#product-list button, #checkout button {
+    padding: 5px 10px;
+}
