@@ -12,9 +12,9 @@ function saveProducts(products) {
 }
 
 function addProduct() {
-    const code = document.getElementById('product-code').value;
-    const name = document.getElementById('product-name').value;
-    const price = document.getElementById('product-price').value;
+    const code = document.getElementById('product-code').value.trim();
+    const name = document.getElementById('product-name').value.trim();
+    const price = document.getElementById('product-price').value.trim();
     
     if (code && name && price) {
         const products = getProducts();
@@ -34,7 +34,7 @@ function clearForm() {
 }
 
 function searchProduct() {
-    const code = document.getElementById('search-code').value;
+    const code = document.getElementById('search-code').value.trim();
     const products = getProducts();
     const product = products.find(p => p.code === code);
 
@@ -89,7 +89,7 @@ function editProduct(code) {
 }
 
 function scanProduct() {
-    const code = document.getElementById('scan-code').value;
+    const code = document.getElementById('scan-code').value.trim();
     const products = getProducts();
     const product = products.find(p => p.code === code);
 
