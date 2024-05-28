@@ -18,6 +18,7 @@ h1, h2 {
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease-in-out;
 }
 
 section {
@@ -29,6 +30,8 @@ section {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 input[type="text"], input[type="number"] {
@@ -38,6 +41,12 @@ input[type="text"], input[type="number"] {
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus, input[type="number"]:focus {
+    border-color: #007bff;
+    outline: none;
 }
 
 button {
@@ -49,11 +58,16 @@ button {
     color: white;
     font-size: 1em;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.3s;
 }
 
 button:hover {
     background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
 }
 
 /* Listas */
@@ -68,6 +82,7 @@ li {
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid #ccc;
+    animation: fadeInUp 0.5s ease-in-out;
 }
 
 li:last-child {
@@ -105,10 +120,16 @@ span {
     padding: 5px 10px;
     background-color: #dc3545;
     margin-left: 5px;
+    transition: background-color 0.3s, transform 0.3s;
 }
 
 #product-list button:hover, #checkout button:hover {
     background-color: #c82333;
+    transform: scale(1.05);
+}
+
+#product-list button:active, #checkout button:active {
+    transform: scale(0.95);
 }
 
 #product-list button:nth-child(2), #checkout button:nth-child(2) {
@@ -117,4 +138,52 @@ span {
 
 #product-list button:nth-child(2):hover, #checkout button:nth-child(2):hover {
     background-color: #218838;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Agregar una transición suave a los elementos de la lista */
+ul li {
+    transition: all 0.3s ease-in-out;
+}
+
+ul li:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.02);
+}
+
+/* Estilos adicionales para entradas de búsqueda */
+#product-search {
+    margin-top: 20px;
+}
+
+#product-result {
+    margin-top: 20px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+#product-result p {
+    font-weight: bold;
+    color: #007bff;
 }
