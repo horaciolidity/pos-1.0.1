@@ -128,15 +128,22 @@ function checkout() {
 }
 
 
- const consultarButton = document.querySelector('.action-button:nth-child(1)');
- const limpiarButton = document.querySelector('.action-button:nth-child(2)');
+const consultarButton = document.querySelector('.action-button:nth-child(1)');
+const limpiarButton = document.querySelector('.action-button:nth-child(2)');
 
-    consultarButton.addEventListener('click', () => {
-        // Lógica para consultar el total vendido
-        console.log('Consultar Total Vendido');
-    });
+consultarButton.addEventListener('click', () => {
+    // Lógica para consultar el total vendido
+    const totalVendido = localStorage.getItem('totalVendido');
+    if (totalVendido) {
+        alert(`Total Vendido: $${totalVendido}`);
+    } else {
+        alert('No hay ventas registradas.');
+    }
+});
 
-    limpiarButton.addEventListener('click', () => {
-        // Lógica para limpiar el total vendido
-        console.log('Limpiar Total Vendido');
-    });
+limpiarButton.addEventListener('click', () => {
+    // Lógica para limpiar el total vendido
+    localStorage.removeItem('totalVendido');
+    alert('Total Vendido limpiado para el nuevo turno.');
+});
+
