@@ -122,10 +122,18 @@ function updateTotalPrice() {
 }
 
 function checkout() {
+    const totalVendido = parseFloat(document.getElementById('total-price').textContent);
+    updateTotalVendido(totalVendido);
+
     document.getElementById('cart').innerHTML = '';
     document.getElementById('total-price').textContent = '0.00';
     alert('Compra finalizada');
 }
+
+function updateTotalVendido(total) {
+    localStorage.setItem('totalVendido', total);
+}
+
 
 
  const consultarButton = document.querySelectorAll('.action-button')[0];
