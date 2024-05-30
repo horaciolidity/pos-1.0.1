@@ -169,13 +169,18 @@ function processFileContents(contents) {
 function parseProducts(contents) {
     const lines = contents.split('\n');
     const products = lines.map(line => {
-        const [code, name, price] = line.split(',');
+        const parts = line.split(',');
+        if (parts.length !== 3) {
+            console.error('Invalid product format:', line);
+            return null; // Omitir líneas mal formateadas
+        }
+        const [code, name, price] = parts;
         return {
             code: code.trim(),
             name: name.trim(),
             price: parseFloat(price.trim())
         };
-    });
+    }).filter(product => product !== null); // Filtrar productos nulos
     return products;
 }
 
