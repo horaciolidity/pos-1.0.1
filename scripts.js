@@ -145,3 +145,47 @@ function limpiarTotalVendido() {
     localStorage.removeItem('totalVendido');
     alert('Total Vendido limpiado para el nuevo turno.');
 }
+
+document.getElementById('fileInput').addEventListener('change', handleFileSelect, false);
+
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const contents = e.target.result;
+            processFileContents(contents);
+        };
+        reader.readAsText(file);
+    }
+}
+
+function processFileContents(contents) {
+    const products = parseProducts(contents);
+    saveProductsToLocalStorage(products);
+    displayProducts();
+}
+
+function parseProducts(contents) {
+    const lines = contents.split('\n');
+    const products = lines.map(line => {
+        const [code, name, price] = line.split(',');
+        return {
+            code: code.trim(),
+            name: name.trim(),
+            price: parseFloat(price.trim())
+        };
+    });
+    return products;
+}
+
+function saveProductsToLocalStorage(products) {
+    const existingProducts = getProducts();
+    const updatedProducts = existingProducts.concat(products);
+    saveProducts(updatedProducts);
+}
+
+function loadProducts() {
+    const products = getProducts();
+    displayProducts(products);
+}
