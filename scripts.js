@@ -194,3 +194,16 @@ function loadProducts() {
     const products = getProducts();
     displayProducts(products);
 }
+
+function downloadProducts() {
+    const products = getProducts();
+    const contents = products.map(p => `${p.code}, ${p.name}, ${p.price}`).join('\n');
+    const blob = new Blob([contents], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'productos.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
