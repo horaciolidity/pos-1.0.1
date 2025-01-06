@@ -9,7 +9,7 @@
 <body>
 <div class="container">
         <div class="header" style="position: relative; text-align: center; margin-bottom: 20px;">
-            <h1 style="position: relative; z-index: 2; color: white; font-size: 2.5em; margin: 0; padding: 20px 0;">Despensa Margarita</h1>
+            <h1>Despensa Margarita</h1>
 <img src="https://despensas-margarita.vercel.app/despensa.jfif" alt="Fondo" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100%; height: 100px; object-fit: cover; z-index: 1; opacity: 0.5;">
             
         </div>
@@ -42,6 +42,24 @@
             <button class="action-button" onclick="consultarTotalVendido()" style="padding: 5px 10px; font-size: 0.9em; border-radius: 15px; background-color: #007bff; color: white; margin: 5px; border: none; cursor: pointer;">Consultar Total Vendido</button>
             <button class="action-button" onclick="limpiarTotalVendido()" style="padding: 5px 10px; font-size: 0.9em; border-radius: 15px; background-color: #dc3545; color: white; margin: 5px; border: none; cursor: pointer;">Limpiar Total Vendido</button>
         </div>
+
+<div id="ventas-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Detalle de Productos Vendidos</h2>
+        <ul id="ventas-detalle"></ul>
+        <p>Total Vendido: $<span id="total-vendido-modal">0.00</span></p>
+        <button onclick="downloadVentas()">Descargar Detalle</button>
+    </div>
+</div>
+
+
+
+
+
+
+
+    
 
       <div>
         <input type="file" id="fileInput" accept=".txt">
