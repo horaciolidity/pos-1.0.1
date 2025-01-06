@@ -242,13 +242,14 @@ function checkout() {
         return; // Detener si hay problemas de stock
     }
 
-    // Actualizar el inventario
-    Object.entries(quantitiesToDeduct).forEach(([code, quantity]) => {
-        const product = products.find(p => p.code === code);
-        if (product) {
-            product.quantity -= quantity; // Restar la cantidad vendida
-        }
-    });
+   // Actualizar el inventario
+Object.entries(quantitiesToDeduct).forEach(([code, quantity]) => {
+    const product = products.find(p => p.code === code);
+    if (product) {
+        product.quantity -= quantity; // Restar la cantidad vendida
+        product.sold = (product.sold || 0) + quantity; // Registrar la cantidad vendida
+    }
+});
 
     saveProducts(products); // Guarda el inventario actualizado
     document.getElementById('cart').innerHTML = ''; // Limpiar el carrito
@@ -260,17 +261,92 @@ function checkout() {
 
 function consultarTotalVendido() {
     const totalVendido = localStorage.getItem('totalVendido');
-    if (totalVendido) {
-        alert(`Total Vendido: $${totalVendido}`);
-    } else {
-        alert('No hay ventas registradas.');
-    }
+    const ventasModal = document.getElementById('ventas-modal');
+    const ventasDetalle = document.getElementById('ventas-detalle');
+    const totalVendidoModal = document.getElementById('total-vendido-modal');
+
+    ventasDetalle.innerHTML = ''; // Limpiar el detalle de ventas
+    const products = getProducts();
+
+    let productosVendidos = '';
+    products.forEach(product => {
+       if (product.sold > 0) { 
+    productosVendidos += `
+        <li>${product.name} - Precio: $${product.price} - Cantidad vendida: ${product.sold}</li>
+    `;
 }
 
-function limpiarTotalVendido() {
-    localStorage.removeItem('totalVendido');
-    alert('Total Vendido limpiado para el nuevo turno.');
+    });
+
+    ventasDetalle.innerHTML = productosVendidos || '<li>No hay productos vendidos aún.</li>';
+    totalVendidoModal.textContent = totalVendido ? totalVendido : '0.00';
+    
+    ventasModal.style.display = 'block'; // Mostrar el modal
 }
+
+// Cerrar el modal
+const closeModal = document.querySelector('.close');
+closeModal.onclick = function() {
+    document.getElementById('ventas-modal').style.display = 'none';
+};
+
+// Descargar detalle de ventas
+function downloadVentas() {
+    const totalVendido = localStorage.getItem('totalVendido') || '0.00';
+    const products = getProducts(); // Asegúrate de que esta función trae correctamente los productos
+    let detalle = `Total Vendido: $${totalVendido}\n\nProductos Vendidos:\n`;
+
+    // Iterar sobre los productos vendidos
+    products.forEach(product => {
+        // Solo incluir los productos que se vendieron
+        if (product.sold && product.sold > 0) {
+            detalle += `${product.name} - Precio: $${product.price} - Cantidad vendida: ${product.sold}\n`;
+        }
+    });
+
+    // Generar archivo de texto
+    const blob = new Blob([detalle], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ventas_detalle.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+// Detectar clic fuera del modal para cerrar
+window.onclick = function(event) {
+    const ventasModal = document.getElementById('ventas-modal');
+    if (event.target === ventasModal) {
+        ventasModal.style.display = 'none';
+    }
+};
+
+
+
+
+function limpiarTotalVendido() {
+    // Eliminar el total vendido del almacenamiento local
+    localStorage.removeItem('totalVendido');
+    
+    // Obtener los productos almacenados
+    const products = getProducts();
+
+    // Restablecer las cantidades vendidas (sold) de todos los productos
+    products.forEach(product => {
+        product.sold = 0; // Reiniciar las ventas a 0
+    });
+
+    // Guardar los productos actualizados
+    saveProducts(products);
+
+    // Actualizar la interfaz de usuario
+    displayProducts();
+
+    alert('Total Vendido y ventas anteriores limpiados para el nuevo turno.');
+}
+
 
 document.getElementById('fileInput').addEventListener('change', handleFileSelect, false);
 
@@ -349,5 +425,5 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             loadingScreen.style.display = 'none'; // Oculta completamente después de la transición
         }, 500); // Tiempo de la transición (0.5 segundos)
-    }, 2000); // Desaparece después de 2 segundos
+    }, 4000); // Desaparece después de 2 segundos
 });
