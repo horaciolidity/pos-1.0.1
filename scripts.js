@@ -59,6 +59,8 @@ function searchProduct() {
         resultDiv.innerHTML = `
             <p>Nombre: ${product.name}</p>
             <p>Precio: $${product.price.toFixed(2)}</p>
+            <p>Cantidad: ${product.quantity}</p>
+
             <button onclick="deleteProduct('${product.code}')">Eliminar</button>
             <button onclick="editProduct('${product.code}')">Editar</button>
         `;
