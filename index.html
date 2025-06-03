@@ -7,6 +7,15 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+    
+    <section>
+  <h2>Apertura de Caja</h2>
+  <input type="number" id="opening-cash" placeholder="Monto inicial">
+  <button onclick="setOpeningCash()">Iniciar Caja</button>
+</section>
+
+    
 <div class="container">
         <div class="header" style="position: relative; text-align: center; margin-bottom: 20px;">
             <h1>Despensa Margarita</h1>
@@ -36,8 +45,21 @@
             <button onclick="scanProduct()">Añadir al Carrito</button>
             <ul id="cart"></ul>
             <p>Total: $<span id="total-price">0.00</span></p>
+
+
+
+  <button onclick="finalizeSale('efectivo')">Pago en Efectivo</button>
+  <button onclick="finalizeSale('transferencia')">Pago Transferido</button>
+
+
+
+
+            
             <button onclick="checkout()">Finalizar Compra</button>
         </section>
+
+
+    
      <div style="text-align: center;">
             <button class="action-button" onclick="consultarTotalVendido()" style="padding: 5px 10px; font-size: 0.9em; border-radius: 15px; background-color: #007bff; color: white; margin: 5px; border: none; cursor: pointer;">Consultar Total Vendido</button>
             <button class="action-button" onclick="limpiarTotalVendido()" style="padding: 5px 10px; font-size: 0.9em; border-radius: 15px; background-color: #dc3545; color: white; margin: 5px; border: none; cursor: pointer;">Limpiar Total Vendido</button>
@@ -49,6 +71,19 @@
         <h2>Detalle de Productos Vendidos</h2>
         <ul id="ventas-detalle"></ul>
         <p>Total Vendido: $<span id="total-vendido-modal">0.00</span></p>
+
+<section>
+  <h2>Arqueo de Caja</h2>
+  <button onclick="showSalesSummary()">Mostrar Arqueo</button>
+  <textarea id="sales-summary" rows="15" style="width:100%; margin-top:10px;"></textarea><br>
+  <button onclick="downloadSummary()">Descargar TXT</button>
+  <button onclick="resetDay()">Limpiar Total Vendido</button>
+</section>
+
+
+
+
+        
         <button onclick="downloadVentas()">Descargar Detalle</button>
     </div>
 </div>
