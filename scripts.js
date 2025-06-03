@@ -442,23 +442,41 @@ function finalizeSale(method) {
     }
 
     const cart = [];
+    const products = getProducts();
+    let hasStockIssue = false;
 
+    // Construir carrito y verificar stock
     cartItems.forEach(item => {
         const code = item.dataset.code;
         const name = item.querySelector('span').textContent.split(' - ')[1].trim();
         const price = parseFloat(item.textContent.split('$')[1].split('-')[0].trim());
         const quantity = parseInt(item.querySelector('.quantity').textContent);
 
+        const product = products.find(p => p.code === code);
+        if (product && product.quantity >= quantity) {
+            product.quantity -= quantity;
+            product.sold = (product.sold || 0) + quantity;
+        } else {
+            alert(`No hay suficiente stock de ${name}`);
+            hasStockIssue = true;
+        }
+
         cart.push({ code, name, price, quantity });
     });
 
+    if (hasStockIssue) return;
+
+    // Guardar venta y estado
     saveSale(cart, method);
-    document.getElementById('cart').innerHTML = ''; // limpiar el carrito visual
-    document.getElementById('total-price').textContent = '0.00'; // resetear total
+    saveProducts(products);
+
+    document.getElementById('cart').innerHTML = ''; // Limpiar el carrito
+    document.getElementById('total-price').textContent = '0.00'; // Resetear total
     alert('Venta registrada con pago: ' + method);
     displayProducts();
     updateTotalPrice();
 }
+
 
 // Mostrar resumen del día
 function showSalesSummary() {
