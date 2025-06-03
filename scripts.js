@@ -434,15 +434,27 @@ function saveSale(cart, paymentMethod) {
     localStorage.setItem('sales', JSON.stringify(sales));
 }
 
-// Finalizar venta con tipo de pago
 function finalizeSale(method) {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    if (cart.length === 0) {
-        alert('Carrito vacío');
+    const cartItems = document.querySelectorAll('#cart li');
+    if (cartItems.length === 0) {
+        alert('El carrito está vacío');
         return;
     }
+
+    const cart = [];
+
+    cartItems.forEach(item => {
+        const code = item.dataset.code;
+        const name = item.querySelector('span').textContent.split(' - ')[1].trim();
+        const price = parseFloat(item.textContent.split('$')[1].split('-')[0].trim());
+        const quantity = parseInt(item.querySelector('.quantity').textContent);
+
+        cart.push({ code, name, price, quantity });
+    });
+
     saveSale(cart, method);
-    localStorage.removeItem('cart');
+    document.getElementById('cart').innerHTML = ''; // limpiar el carrito visual
+    document.getElementById('total-price').textContent = '0.00'; // resetear total
     alert('Venta registrada con pago: ' + method);
     displayProducts();
     updateTotalPrice();
