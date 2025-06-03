@@ -412,6 +412,96 @@ function downloadProducts() {
     a.click();
     document.body.removeChild(a);
 }
+// Apertura de caja
+function setOpeningCash() {
+    const input = document.getElementById('opening-cash');
+    const value = parseFloat(input.value);
+    if (!isNaN(value)) {
+        localStorage.setItem('openingCash', value.toFixed(2));
+        alert('Caja iniciada con $' + value.toFixed(2));
+    }
+}
+
+function getOpeningCash() {
+    return parseFloat(localStorage.getItem('openingCash')) || 0;
+}
+
+// Guardar una venta en LocalStorage
+function saveSale(cart, paymentMethod) {
+    const sales = JSON.parse(localStorage.getItem('sales')) || [];
+    const timestamp = new Date().toLocaleString();
+    sales.push({ cart, paymentMethod, timestamp });
+    localStorage.setItem('sales', JSON.stringify(sales));
+}
+
+// Finalizar venta con tipo de pago
+function finalizeSale(method) {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    if (cart.length === 0) {
+        alert('Carrito vacío');
+        return;
+    }
+    saveSale(cart, method);
+    localStorage.removeItem('cart');
+    alert('Venta registrada con pago: ' + method);
+    displayProducts();
+    updateTotalPrice();
+}
+
+// Mostrar resumen del día
+function showSalesSummary() {
+    const sales = JSON.parse(localStorage.getItem('sales')) || [];
+    let summary = '';
+    let totalCash = 0;
+    let totalTransfer = 0;
+
+    sales.forEach((sale, index) => {
+        summary += `Venta #${index + 1} - ${sale.timestamp} - Método: ${sale.paymentMethod}\n`;
+        const grouped = {};
+        sale.cart.forEach(p => {
+            if (!grouped[p.name]) grouped[p.name] = 0;
+            grouped[p.name] += p.quantity;
+        });
+        for (const [name, qty] of Object.entries(grouped)) {
+            summary += `  ${qty} x ${name}\n`;
+        }
+        const saleTotal = sale.cart.reduce((acc, p) => acc + p.price * p.quantity, 0);
+        summary += `  Total venta: $${saleTotal.toFixed(2)}\n\n`;
+        if (sale.paymentMethod === 'efectivo') totalCash += saleTotal;
+        if (sale.paymentMethod === 'transferencia') totalTransfer += saleTotal;
+    });
+
+    summary += `\nApertura de caja: $${getOpeningCash().toFixed(2)}`;
+    summary += `\nTotal efectivo: $${totalCash.toFixed(2)}`;
+    summary += `\nTotal transferencia: $${totalTransfer.toFixed(2)}`;
+    summary += `\nTotal vendido: $${(totalCash + totalTransfer).toFixed(2)}`;
+
+    const textarea = document.getElementById('sales-summary');
+    textarea.value = summary;
+}
+
+// Descargar el resumen como archivo de texto
+function downloadSummary() {
+    const text = document.getElementById('sales-summary').value;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'arqueo_caja.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Reiniciar las ventas y la apertura
+function resetDay() {
+    localStorage.removeItem('sales');
+    localStorage.removeItem('openingCash');
+    alert('Caja y ventas reiniciadas');
+    document.getElementById('sales-summary').value = '';
+}
+
+
+
 
 
 // Función para verificar el stock y mostrar alertas
