@@ -9,7 +9,7 @@ body {
 
 h1 {
     text-align: center;
-    color: transparent; /* Color del texto transparente para el efecto de gradiente */
+    color: white; /* Color del texto transparente para el efecto de gradiente */
     background: linear-gradient(45deg, #FF5733, #FFBD33, #75FF33, #33FFBD, #339FFF); /* Gradiente floral */
     -webkit-background-clip: text; /* Clipa el fondo al texto */
     background-clip: text; /* Clipa el fondo al texto */
