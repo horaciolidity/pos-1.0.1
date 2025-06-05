@@ -280,17 +280,25 @@ function removeQuantity(code) {
     }
 }
 
-// Función para aumentar la cantidad de un producto en el carrito
 function addQuantity(code) {
-    const cartList = document.getElementById('cart');
-    const existingItem = Array.from(cartList.children).find(item => item.dataset.code === code);
+  const cartList = document.getElementById('cart');
+  const existingItem = Array.from(cartList.children).find(item => item.dataset.code === code);
+  const products = getProducts();
+  const product = products.find(p => p.code === code);
 
-    if (existingItem) {
-        const quantitySpan = existingItem.querySelector('.quantity');
-        const newQuantity = parseInt(quantitySpan.textContent) + 1; // Incrementa la cantidad
-        quantitySpan.textContent = newQuantity; // Actualiza la cantidad en la interfaz
-        updateTotalPrice(); // Actualiza el total
-    }
+  if (existingItem && product) {
+    const quantitySpan = existingItem.querySelector('.quantity');
+    const priceSpan = existingItem.querySelector('.price');
+
+    const currentQuantity = parseFloat(quantitySpan.textContent);
+    const newQuantity = currentQuantity + 1;
+    quantitySpan.textContent = newQuantity.toFixed(3);
+
+    const newPrice = newQuantity * product.price;
+    priceSpan.textContent = newPrice.toFixed(2);
+
+    updateTotalPrice();
+  }
 }
 
 function updateTotalPrice() {
@@ -581,8 +589,9 @@ function finalizeSale(metodoPago) {
   // ✅ Tomar novedad desde campo opcional
   const novedad = document.getElementById('novedad')?.value || '';
   const group = new Date().toLocaleString();
+  const ventas = getVentas();
 
-  const ventas = getSales();
+  
   ventas.push({
     group,
     items: cart,
@@ -590,7 +599,8 @@ function finalizeSale(metodoPago) {
     novedades: novedad
   });
 
-  saveSales(ventas);
+  saveVentas(ventas);
+
   saveProducts(products);
 
   document.getElementById('cart').innerHTML = '';
