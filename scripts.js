@@ -1,9 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
     displayProducts();
     updateTotalPrice();
+
     const input = document.getElementById('opening-cash');
     const valor = localStorage.getItem('openingCash');
     if (valor) input.disabled = true;
+
+    // Lógica de pantalla de carga
+    setTimeout(() => {
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 500);
+        }
+    }, 4000);
 });
 
 function getProducts() {
@@ -654,12 +666,3 @@ function checkStock(product) {
         alert(`Quedan solo ${product.quantity} unidades de ${product.name}.`);
     }
 }
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        const loadingScreen = document.getElementById('loading-screen');
-        loadingScreen.classList.add('hidden'); // Añade la clase para iniciar la transición
-        setTimeout(() => {
-            loadingScreen.style.display = 'none'; // Oculta completamente después de la transición
-        }, 500); // Tiempo de la transición (0.5 segundos)
-    }, 4000); // Desaparece después de 2 segundos
-});
