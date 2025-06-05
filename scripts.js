@@ -525,7 +525,7 @@ function saveSale(cart, paymentMethod) {
     localStorage.setItem('sales', JSON.stringify(sales));
 }
 
-function finalizeSale() {
+function finalizeSale(metodoPago) {
   const cartItems = document.querySelectorAll('#cart li');
   if (cartItems.length === 0) {
     alert('El carrito está vacío');
@@ -565,14 +565,21 @@ function finalizeSale() {
 
   if (hasStockIssue) return;
 
-  // ✅ Tomar novedad desde el campo visible
+  // ✅ Tomar novedad desde campo opcional
   const novedad = document.getElementById('novedad')?.value || '';
-  const paymentDetail = novedad || 'Sin detalle';
+  const group = new Date().toLocaleString();
 
-  // Guardar venta
-  saveSale(cart, paymentDetail);
+  const ventas = getSales();
+  ventas.push({
+    group,
+    items: cart,
+    metodoPago,
+    novedades: novedad
+  });
 
+  saveSales(ventas);
   saveProducts(products);
+
   document.getElementById('cart').innerHTML = '';
   document.getElementById('total-price').textContent = '0.00';
   alert('Venta registrada correctamente');
