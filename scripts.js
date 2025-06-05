@@ -3,10 +3,10 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTotalPrice();
 
     const input = document.getElementById('opening-cash');
-    const valor = localStorage.getItem('openingCash');
-    if (valor) input.disabled = true;
+    const yaInicioCaja = localStorage.getItem('openingCashSet') === 'true';
+    if (yaInicioCaja) input.disabled = true;
 
-    // Lógica de pantalla de carga
+    // Animación de carga (si existe)
     setTimeout(() => {
         const loadingScreen = document.getElementById('loading-screen');
         if (loadingScreen) {
@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 4000);
 });
+
 
 function getProducts() {
     return JSON.parse(localStorage.getItem('products')) || [];
