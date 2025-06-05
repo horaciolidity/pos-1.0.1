@@ -181,16 +181,21 @@ function addToCart(product) {
     const quantitySpan = existingItem.querySelector('.quantity');
     const newQuantity = parseFloat(quantitySpan.textContent) + quantity;
     quantitySpan.textContent = newQuantity.toFixed(3);
+
+    const priceSpan = existingItem.querySelector('.price');
+    const newPrice = parseFloat(priceSpan.textContent) + precioFinal;
+    priceSpan.textContent = newPrice.toFixed(2);
   } else {
     const li = document.createElement('li');
     li.dataset.code = product.code;
     li.innerHTML = `
       <span>
-        ${product.name} - ${quantity} ${product.unit} - $${precioFinal.toFixed(2)}
-        <span class="quantity" style="display:none;">${quantity}</span>
+        ${product.name} - <span class="quantity">${quantity.toFixed(3)}</span> ${product.unit} -
+        $<span class="price">${precioFinal.toFixed(2)}</span>
       </span>
       <button onclick="addQuantity('${product.code}')">+</button>
       <button onclick="removeQuantity('${product.code}')">-</button>
+      <button onclick="editCartItemPrice('${product.code}')">Editar $</button>
     `;
     cartList.appendChild(li);
   }
@@ -212,6 +217,32 @@ function addToCart(product) {
 
   updateCartSummary();
 }
+
+function editCartItemPrice(code) {
+  const cartList = document.getElementById('cart');
+  const item = Array.from(cartList.children).find(item => item.dataset.code === code);
+  if (!item) return;
+
+  const currentPrice = parseFloat(item.querySelector('.price').textContent);
+  const newPrice = parseFloat(prompt("Ingrese el nuevo precio total para este producto:", currentPrice.toFixed(2)));
+
+  if (isNaN(newPrice) || newPrice <= 0) {
+    alert("Precio inválido.");
+    return;
+  }
+
+  const priceSpan = item.querySelector('.price');
+  if (priceSpan) {
+    priceSpan.textContent = newPrice.toFixed(2);
+  }
+
+  updateTotalPrice();
+}
+
+
+
+
+
 
 function removeQuantity(code) {
     const cartList = document.getElementById('cart');
@@ -244,17 +275,24 @@ function addQuantity(code) {
     }
 }
 
-// Función para actualizar el total del carrito
 function updateTotalPrice() {
-    const cartItems = document.querySelectorAll('#cart li');
-    let total = 0;
-    cartItems.forEach(item => {
-        const price = parseFloat(item.textContent.split('$')[1].split('-')[0]); // Extraer precio
-        const quantity = parseInt(item.querySelector('.quantity').textContent); // Extraer cantidad
-        total += price * quantity; // Multiplicar precio por cantidad
-    });
-    document.getElementById('total-price').textContent = total.toFixed(2);
+  const cartList = document.getElementById('cart');
+  let total = 0;
+
+  Array.from(cartList.children).forEach(item => {
+    const priceElement = item.querySelector('.price');
+    if (priceElement) {
+      const price = parseFloat(priceElement.textContent);
+      total += price;
+    }
+  });
+
+  const totalPriceElement = document.getElementById('total-price');
+  if (totalPriceElement) {
+    totalPriceElement.textContent = total.toFixed(2);
+  }
 }
+
 
 function checkout() {
     const total = parseFloat(document.getElementById('total-price').textContent);
