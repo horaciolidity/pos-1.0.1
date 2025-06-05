@@ -18,7 +18,7 @@ function addProduct() {
   const price = parseFloat(document.getElementById('product-price').value.trim());
   const quantity = parseFloat(document.getElementById('product-quantity').value.trim());
   const unit = document.getElementById('product-unit').value;
-  const isBulk = document.getElementById('is-bulk').checked;
+  const isBulk = (unit === 'kg' || unit === 'litro');
 
   if (code && name && price > 0 && quantity > 0) {
     const products = getProducts();
