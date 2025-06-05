@@ -517,80 +517,89 @@ function saveSale(cart, paymentMethod) {
     localStorage.setItem('sales', JSON.stringify(sales));
 }
 
-function finalizeSale(method) {
-    const cartItems = document.querySelectorAll('#cart li');
-    if (cartItems.length === 0) {
-        alert('El carrito está vacío');
-        return;
+function finalizeSale() {
+  const cartItems = document.querySelectorAll('#cart li');
+  if (cartItems.length === 0) {
+    alert('El carrito está vacío');
+    return;
+  }
+
+  const cart = [];
+  const products = getProducts();
+  let hasStockIssue = false;
+
+  cartItems.forEach(item => {
+    const code = item.dataset.code;
+    const name = item.querySelector('span').textContent.split(' - ')[0].trim();
+    const quantity = parseFloat(item.querySelector('.quantity').textContent);
+    const price = parseFloat(item.querySelector('.price').textContent);
+    const unit = item.textContent.includes('kg') ? 'kg' : item.textContent.includes('litro') ? 'litro' : 'unidad';
+
+    const product = products.find(p => p.code === code);
+    if (product && product.quantity >= quantity) {
+      product.quantity -= quantity;
+      product.sold = (product.sold || 0) + quantity;
+    } else {
+      alert(`No hay suficiente stock de ${name}`);
+      hasStockIssue = true;
     }
 
-    const cart = [];
-    const products = getProducts();
-    let hasStockIssue = false;
+    cart.push({ code, name, quantity, price, unit });
+  });
 
-    // Construir carrito y verificar stock
-    cartItems.forEach(item => {
-        const code = item.dataset.code;
-        const name = item.querySelector('span').textContent.split(' - ')[1].trim();
-        const price = parseFloat(item.textContent.split('$')[1].split('-')[0].trim());
-        const quantity = parseInt(item.querySelector('.quantity').textContent);
+  if (hasStockIssue) return;
 
-        const product = products.find(p => p.code === code);
-        if (product && product.quantity >= quantity) {
-            product.quantity -= quantity;
-            product.sold = (product.sold || 0) + quantity;
-        } else {
-            alert(`No hay suficiente stock de ${name}`);
-            hasStockIssue = true;
-        }
+  // 🟨 Solicitar desglose de pago
+  const efectivo = parseFloat(prompt("Monto pagado en efectivo:", "0")) || 0;
+  const transferencia = parseFloat(prompt("Monto pagado por transferencia:", "0")) || 0;
+  const paymentDetail = `Efectivo: $${efectivo.toFixed(2)} - Transferencia: $${transferencia.toFixed(2)}`;
 
-        cart.push({ code, name, price, quantity });
-    });
+  // Guardar venta
+  saveSale(cart, paymentDetail);
 
-    if (hasStockIssue) return;
-
-    // Guardar venta y estado
-    saveSale(cart, method);
-    saveProducts(products);
-
-    document.getElementById('cart').innerHTML = ''; // Limpiar el carrito
-    document.getElementById('total-price').textContent = '0.00'; // Resetear total
-    alert('Venta registrada con pago: ' + method);
-    displayProducts();
-    updateTotalPrice();
+  saveProducts(products);
+  document.getElementById('cart').innerHTML = '';
+  document.getElementById('total-price').textContent = '0.00';
+  alert('Venta registrada correctamente');
+  displayProducts();
+  updateTotalPrice();
 }
 
 
-// Mostrar resumen del día
 function showSalesSummary() {
-    const sales = JSON.parse(localStorage.getItem('sales')) || [];
-    let summary = '';
-    let totalCash = 0;
-    let totalTransfer = 0;
+  const sales = JSON.parse(localStorage.getItem('sales')) || [];
+  let summary = '';
+  let totalCash = 0;
+  let totalTransfer = 0;
 
-    sales.forEach((sale, index) => {
-        summary += `Venta #${index + 1} - ${sale.timestamp} - Método: ${sale.paymentMethod}\n`;
-        const grouped = {};
-        sale.cart.forEach(p => {
-            if (!grouped[p.name]) grouped[p.name] = 0;
-            grouped[p.name] += p.quantity;
-        });
-        for (const [name, qty] of Object.entries(grouped)) {
-            summary += `  ${qty} x ${name}\n`;
-        }
-        const saleTotal = sale.cart.reduce((acc, p) => acc + p.price * p.quantity, 0);
-        summary += `  Total venta: $${saleTotal.toFixed(2)}\n\n`;
-        if (sale.paymentMethod === 'efectivo') totalCash += saleTotal;
-        if (sale.paymentMethod === 'transferencia') totalTransfer += saleTotal;
+  sales.forEach((sale, index) => {
+    summary += `🧾 Venta #${index + 1} - ${sale.timestamp}\n`;
+    summary += `Método de pago: ${sale.paymentMethod}\n`;
+
+    sale.cart.forEach(p => {
+      summary += `  - ${p.name} (${p.unit})\n    Cant: ${p.quantity}\n    Total: $${p.price.toFixed(2)}\n`;
     });
 
-    summary += `\nApertura de caja: $${getOpeningCash().toFixed(2)}`;
-    summary += `\nTotal efectivo: $${totalCash.toFixed(2)}`;
-    summary += `\nTotal transferencia: $${totalTransfer.toFixed(2)}`;
-    summary += `\nTotal vendido: $${(totalCash + totalTransfer).toFixed(2)}`;
+    const saleTotal = sale.cart.reduce((acc, p) => acc + p.price, 0);
+    summary += `  Total de esta venta: $${saleTotal.toFixed(2)}\n\n`;
 
-    const textarea = document.getElementById('sales-summary');
-    textarea.value = summary;
+    if (sale.paymentMethod.includes('Efectivo')) {
+      const match = sale.paymentMethod.match(/Efectivo: \$([0-9.]+)/);
+      if (match) totalCash += parseFloat(match[1]);
+    }
+    if (sale.paymentMethod.includes('Transferencia')) {
+      const match = sale.paymentMethod.match(/Transferencia: \$([0-9.]+)/);
+      if (match) totalTransfer += parseFloat(match[1]);
+    }
+  });
+
+  summary += `\nApertura de caja: $${getOpeningCash().toFixed(2)}`;
+  summary += `\nTotal efectivo: $${totalCash.toFixed(2)}`;
+  summary += `\nTotal transferencia: $${totalTransfer.toFixed(2)}`;
+  summary += `\nTotal vendido: $${(totalCash + totalTransfer).toFixed(2)}`;
+
+  const textarea = document.getElementById('sales-summary');
+  textarea.value = summary;
 }
 
 // Descargar el resumen como archivo de texto
