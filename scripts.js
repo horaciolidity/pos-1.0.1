@@ -164,40 +164,53 @@ function addToCart(product) {
   const cartList = document.getElementById('cart');
   const existingItem = Array.from(cartList.children).find(item => item.dataset.code === product.code);
 
+  let quantity = 1;
+  if (product.isBulk) {
+    const input = prompt(`Ingrese la cantidad en ${product.unit} para "${product.name}" (ej: 0.300):`);
+    const parsed = parseFloat(input);
+    if (isNaN(parsed) || parsed <= 0) {
+      alert("Cantidad inválida");
+      return;
+    }
+    quantity = parsed;
+  }
+
+  const precioFinal = quantity * product.price;
+
   if (existingItem) {
     const quantitySpan = existingItem.querySelector('.quantity');
-    const newQuantity = parseFloat(quantitySpan.textContent) + 1;
-    quantitySpan.textContent = newQuantity.toFixed(3); // actualiza con decimales
+    const newQuantity = parseFloat(quantitySpan.textContent) + quantity;
+    quantitySpan.textContent = newQuantity.toFixed(3);
   } else {
     const li = document.createElement('li');
     li.dataset.code = product.code;
-
-    let quantity = 1;
-    if (product.isBulk) {
-      const input = prompt(`Ingrese la cantidad en ${product.unit} para "${product.name}" (ej: 0.300):`);
-      const parsed = parseFloat(input);
-      if (isNaN(parsed) || parsed <= 0) {
-        alert("Cantidad inválida");
-        return;
-      }
-      quantity = parsed;
-    }
-
-    const precioFinal = quantity * product.price;
-    const rendimiento = (precioFinal / product.cost).toFixed(2);
-
-
     li.innerHTML = `
       <span>
-        ${product.code} - ${product.name} - ${quantity} ${product.unit} - $${precioFinal.toFixed(2)}
+        ${product.name} - ${quantity} ${product.unit} - $${precioFinal.toFixed(2)}
         <span class="quantity" style="display:none;">${quantity}</span>
       </span>
       <button onclick="addQuantity('${product.code}')">+</button>
       <button onclick="removeQuantity('${product.code}')">-</button>
     `;
-
     cartList.appendChild(li);
   }
+
+  // Guardar venta en localStorage
+  const ventas = getVentas();
+  ventas.push({
+    code: product.code,
+    name: product.name,
+    cantidadVendida: quantity,
+    unit: product.unit,
+    price: product.price,
+    precioFinal: precioFinal,
+    cost: product.cost,
+    rendimiento: (precioFinal / product.cost).toFixed(2),
+    isBulk: product.isBulk
+  });
+  saveVentas(ventas);
+
+  updateCartSummary();
 }
 
 function removeQuantity(code) {
