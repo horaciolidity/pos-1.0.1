@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     displayProducts();
     updateTotalPrice();
+    const input = document.getElementById('opening-cash');
+    const valor = localStorage.getItem('openingCash');
+    if (valor) input.disabled = true;
 });
 
 function getProducts() {
@@ -13,49 +16,48 @@ function saveProducts(products) {
 
 
 function addProduct() {
-  const code = document.getElementById('product-code').value.trim();
-  const name = document.getElementById('product-name').value.trim();
-  const price = parseFloat(document.getElementById('product-price').value.trim());
-  const quantity = parseFloat(document.getElementById('product-quantity').value.trim());
-  const unit = document.getElementById('product-unit').value;
-  const isBulk = (unit === 'kg' || unit === 'litro');
+    const code = document.getElementById('product-code').value.trim();
+    const name = document.getElementById('product-name').value.trim();
+    const price = parseFloat(document.getElementById('product-price').value.trim());
+    const quantity = parseFloat(document.getElementById('product-quantity').value.trim());
+    const cost = parseFloat(document.getElementById('product-cost').value.trim());
+    const unit = document.getElementById('product-unit').value;
+    const isBulk = (unit === 'kg' || unit === 'litro');
 
-  if (code && name && price > 0 && quantity > 0) {
-    const products = getProducts();
-    const existingProductIndex = products.findIndex(p => p.code === code);
+    if (code && name && price > 0 && quantity > 0) {
+        const products = getProducts();
+        const existingProductIndex = products.findIndex(p => p.code === code);
 
-    const newProduct = {
-      code,
-      name,
-      price,
-      quantity,
-      unit,
-      isBulk,
-      cost: price, // asumimos que el costo es el mismo que precio al crear
-    };
+        const newProduct = {
+            code,
+            name,
+            price,
+            quantity,
+            unit,
+            isBulk,
+            cost,
+        };
 
-    if (existingProductIndex !== -1) {
-      // Si el producto ya existe, solo actualizamos la cantidad
-      products[existingProductIndex].quantity += quantity;
-    } else {
-      products.push(newProduct);
+        if (existingProductIndex !== -1) {
+            products[existingProductIndex].quantity += quantity;
+        } else {
+            products.push(newProduct);
+        }
+
+        saveProducts(products);
+        displayProducts();
+        updateTotalPrice();
+        clearForm();
     }
-
-    saveProducts(products);
-    displayProducts();
-    updateTotalPrice();
-    clearForm();
-
-  }
 }
-
 
 
 function clearForm() {
     document.getElementById('product-code').value = '';
     document.getElementById('product-name').value = '';
     document.getElementById('product-price').value = '';
-    document.getElementById('product-quantity').value = ''; // Limpiar el campo de cantidad
+    document.getElementById('product-quantity').value = '';
+    document.getElementById('product-cost').value = '';
 }
 
 function searchProduct() {
@@ -496,15 +498,20 @@ function downloadProducts() {
     a.click();
     document.body.removeChild(a);
 }
-// Apertura de caja
 function setOpeningCash() {
     const input = document.getElementById('opening-cash');
-    const value = parseFloat(input.value);
-    if (!isNaN(value)) {
+    const value = parseFloat(input.value.trim());
+    if (!isNaN(value) && value >= 0) {
         localStorage.setItem('openingCash', value.toFixed(2));
-        alert('Caja iniciada con $' + value.toFixed(2));
+        input.disabled = true;
+        alert("Caja iniciada con $" + value.toFixed(2));
+    } else {
+        alert("Ingrese un monto válido");
     }
 }
+
+
+
 
 function getOpeningCash() {
     return parseFloat(localStorage.getItem('openingCash')) || 0;
@@ -534,7 +541,8 @@ function finalizeSale() {
     const name = item.querySelector('span').textContent.split(' - ')[0].trim();
     const quantity = parseFloat(item.querySelector('.quantity').textContent);
     const price = parseFloat(item.querySelector('.price').textContent);
-    const unit = item.textContent.includes('kg') ? 'kg' : item.textContent.includes('litro') ? 'litro' : 'unidad';
+    const unit = item.textContent.includes('kg') ? 'kg' :
+                 item.textContent.includes('litro') ? 'litro' : 'unidad';
 
     const product = products.find(p => p.code === code);
     if (product && product.quantity >= quantity) {
@@ -545,15 +553,21 @@ function finalizeSale() {
       hasStockIssue = true;
     }
 
-    cart.push({ code, name, quantity, price, unit });
+    cart.push({
+      code,
+      name,
+      quantity,
+      price,
+      unit,
+      cost: product.cost || 0
+    });
   });
 
   if (hasStockIssue) return;
 
-  // 🟨 Solicitar desglose de pago
-  const efectivo = parseFloat(prompt("Monto pagado en efectivo:", "0")) || 0;
-  const transferencia = parseFloat(prompt("Monto pagado por transferencia:", "0")) || 0;
-  const paymentDetail = `Efectivo: $${efectivo.toFixed(2)} - Transferencia: $${transferencia.toFixed(2)}`;
+  // ✅ Tomar novedad desde el campo visible
+  const novedad = document.getElementById('novedad')?.value || '';
+  const paymentDetail = novedad || 'Sin detalle';
 
   // Guardar venta
   saveSale(cart, paymentDetail);
@@ -566,43 +580,37 @@ function finalizeSale() {
   updateTotalPrice();
 }
 
-
 function showSalesSummary() {
-  const sales = JSON.parse(localStorage.getItem('sales')) || [];
-  let summary = '';
-  let totalCash = 0;
-  let totalTransfer = 0;
+    const ventas = getSales();
+    let summary = "";
 
-  sales.forEach((sale, index) => {
-    summary += `🧾 Venta #${index + 1} - ${sale.timestamp}\n`;
-    summary += `Método de pago: ${sale.paymentMethod}\n`;
+    ventas.forEach(v => {
+        const group = v.group;
+        const novedades = v.novedades || "";
+        summary += `Grupo: ${group}\nProducto\tCantidad\tPrecio Venta\tCosto\tGanancia\n`;
+        let totalGrupo = 0;
+        let gananciaGrupo = 0;
 
-    sale.cart.forEach(p => {
-      summary += `  - ${p.name} (${p.unit})\n    Cant: ${p.quantity}\n    Total: $${p.price.toFixed(2)}\n`;
+        v.items.forEach(item => {
+            const itemTotal = item.price * item.quantity;
+            const ganancia = (item.price - item.cost) * item.quantity;
+            summary += `${item.name}\t${item.quantity}\t$${item.price}\t$${item.cost}\t$${ganancia.toFixed(2)}\n`;
+            totalGrupo += itemTotal;
+            gananciaGrupo += ganancia;
+        });
+
+        summary += `Total del Grupo: $${totalGrupo.toFixed(2)}\nGanancia Total: $${gananciaGrupo.toFixed(2)}\n`;
+        summary += `Pago: ${v.metodoPago}\n`;
+        if (novedades) summary += `Novedades: ${novedades}\n`;
+        summary += `-----------------------------\n`;
     });
 
-    const saleTotal = sale.cart.reduce((acc, p) => acc + p.price, 0);
-    summary += `  Total de esta venta: $${saleTotal.toFixed(2)}\n\n`;
-
-    if (sale.paymentMethod.includes('Efectivo')) {
-      const match = sale.paymentMethod.match(/Efectivo: \$([0-9.]+)/);
-      if (match) totalCash += parseFloat(match[1]);
-    }
-    if (sale.paymentMethod.includes('Transferencia')) {
-      const match = sale.paymentMethod.match(/Transferencia: \$([0-9.]+)/);
-      if (match) totalTransfer += parseFloat(match[1]);
-    }
-  });
-
-  summary += `\nApertura de caja: $${getOpeningCash().toFixed(2)}`;
-  summary += `\nTotal efectivo: $${totalCash.toFixed(2)}`;
-  summary += `\nTotal transferencia: $${totalTransfer.toFixed(2)}`;
-  summary += `\nTotal vendido: $${(totalCash + totalTransfer).toFixed(2)}`;
-
-  const textarea = document.getElementById('sales-summary');
-  textarea.value = summary;
+    document.getElementById("sales-summary").value = summary;
 }
 
+function payWithTransfer() {
+    finalizeSale('Transferido');
+}
 // Descargar el resumen como archivo de texto
 function downloadSummary() {
     const text = document.getElementById('sales-summary').value;
@@ -615,12 +623,12 @@ function downloadSummary() {
     document.body.removeChild(link);
 }
 
-// Reiniciar las ventas y la apertura
 function resetDay() {
     localStorage.removeItem('sales');
     localStorage.removeItem('openingCash');
-    alert('Caja y ventas reiniciadas');
-    document.getElementById('sales-summary').value = '';
+    document.getElementById("sales-summary").value = "";
+    document.getElementById("opening-cash").disabled = false;
+    alert("Total vendido y caja reseteados.");
 }
 
 function getVentas() {
