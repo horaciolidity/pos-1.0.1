@@ -27,7 +27,22 @@
     <input type="text" id="product-code" placeholder="Código de Barras">
     <input type="text" id="product-name" placeholder="Nombre del Producto">
     <input type="number" id="product-price" placeholder="Precio">
+                   <!-- Unidad de medida -->
+<label for="product-unit">Unidad de medida:</label>
+<select id="product-unit">
+  <option value="unidad">Unidad</option>
+  <option value="kg">Kg</option>
+  <option value="litro">Litro</option>
+</select>
+
+<!-- Producto a granel -->
+<label for="is-bulk">
+  <input type="checkbox" id="is-bulk" />
+  ¿Se vende a granel?
+</label>
+
     <input type="number" id="product-quantity" placeholder="Cantidad" min="1"> <!-- Campo de cantidad -->
+   
     <button onclick="addProduct()">Agregar Producto</button>
 </section>
 
