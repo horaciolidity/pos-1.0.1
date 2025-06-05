@@ -35,13 +35,14 @@
   <option value="litro">Litro</option>
 </select>
 
-<!-- Producto a granel -->
-<label for="is-bulk">
-  <input type="checkbox" id="is-bulk" />
-  ¿Se vende a granel?
-</label>
+
+
 
     <input type="number" id="product-quantity" placeholder="Cantidad" min="1"> <!-- Campo de cantidad -->
+           <label for="is-bulk">
+  <input type="checkbox" id="is-bulk" />
+  ¿Este producto se vende por kilo/litro?
+</label>
    
     <button onclick="addProduct()">Agregar Producto</button>
 </section>
