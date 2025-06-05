@@ -13,29 +13,38 @@ function saveProducts(products) {
 
 
 function addProduct() {
-    const code = document.getElementById('product-code').value.trim();
-    const name = document.getElementById('product-name').value.trim();
-    const price = document.getElementById('product-price').value.trim();
-    const quantity = parseInt(document.getElementById('product-quantity').value.trim());
+  const code = document.getElementById('product-code').value.trim();
+  const name = document.getElementById('product-name').value.trim();
+  const price = parseFloat(document.getElementById('product-price').value.trim());
+  const quantity = parseFloat(document.getElementById('product-quantity').value.trim());
+  const unit = document.getElementById('product-unit').value;
+  const isBulk = document.getElementById('is-bulk').checked;
 
-    if (code && name && price && quantity > 0) {
-        const products = getProducts();
-        const existingProductIndex = products.findIndex(p => p.code === code);
+  if (code && name && price > 0 && quantity > 0) {
+    const products = getProducts();
+    const existingProductIndex = products.findIndex(p => p.code === code);
 
-        if (existingProductIndex !== -1) {
-            // Si el producto ya existe, solo actualizamos la cantidad
-            products[existingProductIndex].quantity += quantity;
-        } else {
-            // Si es un producto nuevo, lo añadimos
-            products.push({ code, name, price: parseFloat(price), quantity });
-        }
+    const newProduct = {
+      code,
+      name,
+      price,
+      quantity,
+      unit,
+      isBulk,
+      cost: price, // asumimos que el costo es el mismo que precio al crear
+    };
 
-        saveProducts(products);
-        displayProducts();
-        clearForm();
+    if (existingProductIndex !== -1) {
+      // Si el producto ya existe, solo actualizamos la cantidad
+      products[existingProductIndex].quantity += quantity;
     } else {
-        alert('Por favor, complete todos los campos correctamente');
+      products.push(newProduct);
     }
+
+    saveProducts(products);
+    displayProducts();
+    updateTotalPrice();
+  }
 }
 
 
@@ -152,24 +161,45 @@ function scanProduct() {
     }
 }
 function addToCart(product) {
-    const cartList = document.getElementById('cart');
-    const existingItem = Array.from(cartList.children).find(item => item.dataset.code === product.code);
+  const cartList = document.getElementById('cart');
+  const existingItem = Array.from(cartList.children).find(item => item.dataset.code === product.code);
 
-    if (existingItem) {
-        const quantitySpan = existingItem.querySelector('.quantity');
-        const newQuantity = parseInt(quantitySpan.textContent) + 1;
-        quantitySpan.textContent = newQuantity; // Actualiza la cantidad en la interfaz
-    } else {
-        const li = document.createElement('li');
-        li.dataset.code = product.code; // Guardamos el código del producto en un atributo data
-        li.innerHTML = ` 
-            <span>${product.code} - ${product.name} - $${product.price.toFixed(2)} - Cantidad: <span class="quantity">1</span></span>
-            <button onclick="addQuantity('${product.code}')">+</button> <!-- Botón para añadir más -->
-            <button onclick="removeQuantity('${product.code}')">-</button> <!-- Botón para quitar --> <!-- Aquí añado el botón -->
-        `;
-        cartList.appendChild(li);
+  if (existingItem) {
+    const quantitySpan = existingItem.querySelector('.quantity');
+    const newQuantity = parseFloat(quantitySpan.textContent) + 1;
+    quantitySpan.textContent = newQuantity.toFixed(3); // actualiza con decimales
+  } else {
+    const li = document.createElement('li');
+    li.dataset.code = product.code;
+
+    let quantity = 1;
+    if (product.isBulk) {
+      const input = prompt(`Ingrese la cantidad en ${product.unit} para "${product.name}" (ej: 0.300):`);
+      const parsed = parseFloat(input);
+      if (isNaN(parsed) || parsed <= 0) {
+        alert("Cantidad inválida");
+        return;
+      }
+      quantity = parsed;
     }
+
+    const precioFinal = quantity * product.price;
+    const rendimiento = (precioFinal / product.cost).toFixed(2);
+
+
+    li.innerHTML = `
+      <span>
+        ${product.code} - ${product.name} - ${quantity} ${product.unit} - $${precioFinal.toFixed(2)}
+        <span class="quantity" style="display:none;">${quantity}</span>
+      </span>
+      <button onclick="addQuantity('${product.code}')">+</button>
+      <button onclick="removeQuantity('${product.code}')">-</button>
+    `;
+
+    cartList.appendChild(li);
+  }
 }
+
 function removeQuantity(code) {
     const cartList = document.getElementById('cart');
     const existingItem = Array.from(cartList.children).find(item => item.dataset.code === code);
