@@ -321,3 +321,10 @@ ul li:hover {
 .modal button:hover {
     background-color: #555; /* Cambia el fondo al pasar el cursor */
 }
+
+#product-unit,
+#is-bulk {
+  margin: 0.5rem 0;
+  display: block;
+}
+
