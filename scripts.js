@@ -217,7 +217,8 @@ function addToCart(product) {
   });
   saveVentas(ventas);
 
-  updateCartSummary();
+updateTotalPrice();
+
 }
 
 function editCartItemPrice(code) {
