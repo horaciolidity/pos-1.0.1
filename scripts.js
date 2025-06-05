@@ -44,6 +44,8 @@ function addProduct() {
     saveProducts(products);
     displayProducts();
     updateTotalPrice();
+    clearForm();
+
   }
 }
 
