@@ -622,6 +622,12 @@ function resetDay() {
     document.getElementById('sales-summary').value = '';
 }
 
+function getVentas() {
+  return JSON.parse(localStorage.getItem('ventas')) || [];
+}
+function saveVentas(ventas) {
+  localStorage.setItem('ventas', JSON.stringify(ventas));
+}
 
 
 
