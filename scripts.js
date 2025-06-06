@@ -561,7 +561,6 @@ function finalizeSale(method) {
             hasStockIssue = true;
         }
 
-        // Se incluye cost en cada ítem del carrito
         cart.push({
             code,
             name,
@@ -573,10 +572,11 @@ function finalizeSale(method) {
 
     if (hasStockIssue) return;
 
-    // Guardar la venta
+    const novedades = prompt("¿Desea agregar alguna novedad sobre esta venta? (opcional)") || "";
+
     const sales = JSON.parse(localStorage.getItem('sales')) || [];
     const timestamp = new Date().toLocaleString();
-    sales.push({ cart, paymentMethod: method, timestamp });
+    sales.push({ cart, paymentMethod: method, timestamp, novedades });
     localStorage.setItem('sales', JSON.stringify(sales));
 
     saveProducts(products);
@@ -598,29 +598,30 @@ function showSalesSummary() {
     sales.forEach((sale, index) => {
         summary += `🧾 Venta #${index + 1} - ${sale.timestamp} - Método: ${sale.paymentMethod}\n`;
 
-        const grouped = {};
         sale.cart.forEach(p => {
-            if (!grouped[p.name]) grouped[p.name] = 0;
-            grouped[p.name] += p.quantity;
+            const subtotal = p.price * p.quantity;
+            const costoTotal = (p.cost || 0) * p.quantity;
+            summary += `  ${p.quantity} x ${p.name} | Precio: $${p.price.toFixed(2)} | Costo: $${(p.cost || 0).toFixed(2)} | Subtotal: $${subtotal.toFixed(2)}\n`;
+            totalCostos += costoTotal;
         });
 
-        for (const [name, qty] of Object.entries(grouped)) {
-            summary += `  ${qty} x ${name}\n`;
-        }
-
-        const saleTotal = sale.cart.reduce((acc, p) => acc + p.price * p.quantity, 0);
-        const saleCost = sale.cart.reduce((acc, p) => acc + ((p.cost || 0) * p.quantity), 0);
-        const ganancia = saleTotal - saleCost;
-
-        totalCostos += saleCost;
+        const totalVenta = sale.cart.reduce((acc, p) => acc + (p.price * p.quantity), 0);
+        const totalCosto = sale.cart.reduce((acc, p) => acc + ((p.cost || 0) * p.quantity), 0);
+        const ganancia = totalVenta - totalCosto;
         totalGanancia += ganancia;
 
-        summary += `  Total venta: $${saleTotal.toFixed(2)}\n`;
-        summary += `  Costo total: $${saleCost.toFixed(2)}\n`;
-        summary += `  Ganancia: $${ganancia.toFixed(2)}\n\n`;
+        summary += `  Total venta: $${totalVenta.toFixed(2)}\n`;
+        summary += `  Costo total: $${totalCosto.toFixed(2)}\n`;
+        summary += `  Ganancia: $${ganancia.toFixed(2)}\n`;
 
-        if (sale.paymentMethod === 'efectivo') totalCash += saleTotal;
-        if (sale.paymentMethod === 'transferencia') totalTransfer += saleTotal;
+        if (sale.novedades && sale.novedades.trim() !== "") {
+            summary += `  📝 Novedades: ${sale.novedades}\n`;
+        }
+
+        summary += '\n';
+
+        if (sale.paymentMethod === 'efectivo') totalCash += totalVenta;
+        if (sale.paymentMethod === 'transferencia') totalTransfer += totalVenta;
     });
 
     summary += `\n🔓 Apertura de caja: $${getOpeningCash().toFixed(2)}`;
@@ -633,6 +634,7 @@ function showSalesSummary() {
     const textarea = document.getElementById('sales-summary');
     textarea.value = summary;
 }
+
 
 
 function payWithTransfer() {
