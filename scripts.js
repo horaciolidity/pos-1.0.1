@@ -535,68 +535,56 @@ function saveSale(cart, paymentMethod) {
     localStorage.setItem('sales', JSON.stringify(sales));
 }
 
-function finalizeSale(metodoPago) {
-  const cartItems = document.querySelectorAll('#cart li');
-  if (cartItems.length === 0) {
-    alert('El carrito está vacío');
-    return;
-  }
-
-  const cart = [];
-  const products = getProducts();
-  let hasStockIssue = false;
-
-  cartItems.forEach(item => {
-    const code = item.dataset.code;
-    const name = item.querySelector('span').textContent.split(' - ')[0].trim();
-    const quantity = parseFloat(item.querySelector('.quantity').textContent);
-    const price = parseFloat(item.querySelector('.price').textContent);
-    const unit = item.textContent.includes('kg') ? 'kg' :
-                 item.textContent.includes('litro') ? 'litro' : 'unidad';
-
-    const product = products.find(p => p.code === code);
-    if (product && product.quantity >= quantity) {
-      product.quantity -= quantity;
-      product.sold = (product.sold || 0) + quantity;
-    } else {
-      alert(`No hay suficiente stock de ${name}`);
-      hasStockIssue = true;
+function finalizeSale(method) {
+    const cartItems = document.querySelectorAll('#cart li');
+    if (cartItems.length === 0) {
+        alert('El carrito está vacío');
+        return;
     }
 
-    cart.push({
-      code,
-      name,
-      quantity,
-      price,
-      unit,
-      cost: product.cost || 0
+    const cart = [];
+    const products = getProducts();
+    let hasStockIssue = false;
+
+    cartItems.forEach(item => {
+        const code = item.dataset.code;
+        const name = item.querySelector('span').textContent.split(' - ')[1].trim();
+        const price = parseFloat(item.textContent.split('$')[1].split('-')[0].trim());
+        const quantity = parseInt(item.querySelector('.quantity').textContent);
+
+        const product = products.find(p => p.code === code);
+        if (product && product.quantity >= quantity) {
+            product.quantity -= quantity;
+            product.sold = (product.sold || 0) + quantity;
+        } else {
+            alert(`No hay suficiente stock de ${name}`);
+            hasStockIssue = true;
+        }
+
+        // Se incluye cost en cada ítem del carrito
+        cart.push({
+            code,
+            name,
+            price,
+            quantity,
+            cost: product ? product.cost || 0 : 0
+        });
     });
-  });
 
-  if (hasStockIssue) return;
+    if (hasStockIssue) return;
 
-  // ✅ Tomar novedad desde campo opcional
-  const novedad = document.getElementById('novedad')?.value || '';
-  const group = new Date().toLocaleString();
+    // Guardar la venta
+    const sales = JSON.parse(localStorage.getItem('sales')) || [];
+    const timestamp = new Date().toLocaleString();
+    sales.push({ cart, paymentMethod: method, timestamp });
+    localStorage.setItem('sales', JSON.stringify(sales));
 
-  // ✅ Obtener ventas antes de guardar
-  const ventas = getVentas();
-
-  ventas.push({
-    group,
-    items: cart,
-    metodoPago,
-    novedades: novedad
-  });
-
-  saveVentas(ventas);
-  saveProducts(products);
-
-  document.getElementById('cart').innerHTML = '';
-  document.getElementById('total-price').textContent = '0.00';
-  alert('Venta registrada correctamente');
-  displayProducts();
-  updateTotalPrice();
+    saveProducts(products);
+    document.getElementById('cart').innerHTML = '';
+    document.getElementById('total-price').textContent = '0.00';
+    alert('Venta registrada con pago: ' + method);
+    displayProducts();
+    updateTotalPrice();
 }
 
 function showSalesSummary() {
