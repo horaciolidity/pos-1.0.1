@@ -616,30 +616,35 @@ function showSalesSummary() {
     let totalTransfer = 0;
 
     ventas.forEach((venta, index) => {
-        summary += `🧾 Venta #${index + 1} - ${venta.group} - Método: ${venta.metodoPago}\n`;
+    if (!venta || !Array.isArray(venta.items)) {
+        console.warn(`Venta #${index + 1} inválida o sin items.`, venta);
+        return;
+    }
 
-        const grouped = {};
-        venta.items.forEach(item => {
-            if (!grouped[item.name]) grouped[item.name] = 0;
-            grouped[item.name] += item.quantity;
-        });
+    summary += `🧾 Venta #${index + 1} - ${venta.group} - Método: ${venta.metodoPago}\n`;
 
-        for (const [name, qty] of Object.entries(grouped)) {
-            summary += `  ${qty} x ${name}\n`;
-        }
-
-        const totalVenta = venta.items.reduce((acc, p) => acc + (p.price * p.quantity), 0);
-        summary += `  Total venta: $${totalVenta.toFixed(2)}\n`;
-
-        if (venta.novedades && venta.novedades.trim() !== "") {
-            summary += `  📝 Novedades: ${venta.novedades}\n`;
-        }
-
-        summary += '\n';
-
-        if (venta.metodoPago.toLowerCase().includes("efectivo")) totalCash += totalVenta;
-        if (venta.metodoPago.toLowerCase().includes("transfer")) totalTransfer += totalVenta;
+    const grouped = {};
+    venta.items.forEach(item => {
+        if (!grouped[item.name]) grouped[item.name] = 0;
+        grouped[item.name] += item.quantity;
     });
+
+    for (const [name, qty] of Object.entries(grouped)) {
+        summary += `  ${qty} x ${name}\n`;
+    }
+
+    const totalVenta = venta.items.reduce((acc, p) => acc + (p.price * p.quantity), 0);
+    summary += `  Total venta: $${totalVenta.toFixed(2)}\n`;
+
+    if (venta.novedades && venta.novedades.trim() !== "") {
+        summary += `  📝 Novedades: ${venta.novedades}\n`;
+    }
+
+    summary += '\n';
+
+    if (venta.metodoPago.toLowerCase().includes("efectivo")) totalCash += totalVenta;
+    if (venta.metodoPago.toLowerCase().includes("transfer")) totalTransfer += totalVenta;
+});
 
     summary += `Apertura de caja: $${getOpeningCash().toFixed(2)}\n`;
     summary += `Total efectivo: $${totalCash.toFixed(2)}\n`;
