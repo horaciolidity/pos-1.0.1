@@ -609,36 +609,46 @@ function finalizeSale(metodoPago) {
   displayProducts();
   updateTotalPrice();
 }
-
 function showSalesSummary() {
-    const ventas = getVentas();
-    let summary = "";
+    const sales = JSON.parse(localStorage.getItem('sales')) || [];
+    let summary = '';
+    let totalCash = 0;
+    let totalTransfer = 0;
 
-    ventas.forEach(v => {
-        const group = v.group || "Sin grupo";
-        const novedades = v.novedades || "";
-        summary += `Grupo: ${group}\nProducto\tCantidad\tPrecio Venta\tCosto\tGanancia\n`;
-        let totalGrupo = 0;
-        let gananciaGrupo = 0;
+    sales.forEach((sale, index) => {
+        summary += `Venta #${index + 1} - ${sale.timestamp} - Método: ${sale.paymentMethod}\n`;
 
-        if (Array.isArray(v.items)) {
-            v.items.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                const ganancia = (item.price - item.cost) * item.quantity;
-                summary += `${item.name}\t${item.quantity}\t$${item.price}\t$${item.cost}\t$${ganancia.toFixed(2)}\n`;
-                totalGrupo += itemTotal;
-                gananciaGrupo += ganancia;
-            });
-        } else {
-            summary += `⚠️ No hay productos registrados en este grupo.\n`;
+        const grouped = {};
+        sale.cart.forEach(p => {
+            if (!grouped[p.name]) grouped[p.name] = 0;
+            grouped[p.name] += p.quantity;
+        });
+
+        for (const [name, qty] of Object.entries(grouped)) {
+            summary += `  ${qty} x ${name}\n`;
         }
 
-        summary += `TOTAL GRUPO: $${totalGrupo.toFixed(2)}\nGANANCIA GRUPO: $${gananciaGrupo.toFixed(2)}\n`;
-        summary += novedades ? `Novedades: ${novedades}\n` : "";
-        summary += `-----------------------------\n`;
+        const saleTotal = sale.cart.reduce((acc, p) => acc + p.price * p.quantity, 0);
+        summary += `  Total venta: $${saleTotal.toFixed(2)}\n`;
+
+        // Mostrar novedades si existen
+        if (sale.novedades && sale.novedades.trim() !== "") {
+            summary += `  📝 Novedades: ${sale.novedades}\n`;
+        }
+
+        summary += '\n';
+
+        if (sale.paymentMethod === 'efectivo') totalCash += saleTotal;
+        if (sale.paymentMethod === 'transferencia') totalTransfer += saleTotal;
     });
 
-    alert(summary || "No hay ventas registradas.");
+    summary += `\nApertura de caja: $${getOpeningCash().toFixed(2)}`;
+    summary += `\nTotal efectivo: $${totalCash.toFixed(2)}`;
+    summary += `\nTotal transferencia: $${totalTransfer.toFixed(2)}`;
+    summary += `\nTotal vendido: $${(totalCash + totalTransfer).toFixed(2)}`;
+
+    const textarea = document.getElementById('sales-summary');
+    textarea.value = summary;
 }
 
 
