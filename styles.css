@@ -1,276 +1,256 @@
-/* ========= GLOBAL STYLES ========= */
+/* ======= PALETA TIPO CARREFOUR POS ======= */
 :root {
-    --primary: #007bff;
-    --success: #28a745;
-    --danger: #dc3545;
-    --light-bg: #ecf0f1;
-    --dark-bg: #2c3e50;
-    --card-bg: #1e1e1e;
-    --text-color: #ecf0f1;
-    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --azul-carrefour: #005bac;
+  --azul-claro: #4fa3ff;
+  --verde-confirmado: #28a745;
+  --gris-suave: #f5f6fa;
+  --gris-texto: #4b4b4b;
+  --rojo-claro: #e74c3c;
+  --fuente-principal: 'Segoe UI', Tahoma, sans-serif;
 }
 
+/* ======= RESETEO GENERAL ======= */
 body {
-    font-family: var(--font-main);
-    background-color: var(--dark-bg);
-    color: var(--text-color);
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
+  font-family: var(--fuente-principal);
+  background-color: var(--gris-suave);
+  color: var(--gris-texto);
 }
 
-/* ========= TITULOS ========= */
+/* ======= ENCABEZADOS ======= */
 h1 {
-    text-align: center;
-    font-size: 3em;
-    font-weight: bold;
-    padding: 20px 15px;
-    margin: 20px 0;
-    background: linear-gradient(45deg, #FF5733, #FFBD33, #75FF33, #33FFBD, #339FFF);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
-    letter-spacing: 1.5px;
-    border-radius: 10px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  font-size: 2.5em;
+  margin: 30px 0 10px;
+  color: var(--azul-carrefour);
+  font-weight: bold;
 }
 
 h2 {
-    text-align: center;
-    font-size: 1.5em;
-    margin: 15px 0;
-    color: var(--text-color);
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  font-size: 1.4em;
+  color: var(--azul-carrefour);
+  margin: 15px 0;
 }
 
-/* ========= CONTAINER ========= */
+/* ======= CONTENEDOR PRINCIPAL ======= */
 .container {
-    max-width: 960px;
-    margin: 30px auto;
-    padding: 30px;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.35);
-    animation: fadeIn 1s ease-in-out;
+  max-width: 1080px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-/* ========= FORMULARIOS ========= */
-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: space-between;
-    margin-bottom: 20px;
+/* ======= SECCIONES Y FORMULARIOS ======= */
+section {
+  margin-bottom: 40px;
+}
+
+form, #product-form, #product-search, #checkout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+  justify-content: space-between;
 }
 
 input[type="text"],
-input[type="number"],
-select {
-    flex: 1;
-    padding: 10px 12px;
-    border-radius: 6px;
-    border: 1px solid #bdc3c7;
-    background-color: var(--light-bg);
-    color: var(--dark-bg);
-    transition: all 0.3s ease;
-    font-size: 1em;
+input[type="number"] {
+  flex: 1 1 200px;
+  padding: 12px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #000;
+  transition: border-color 0.3s ease;
 }
 
-input:focus,
-select:focus {
-    border-color: var(--primary);
-    outline: none;
-    box-shadow: 0 0 5px var(--primary);
+input:focus {
+  border-color: var(--azul-carrefour);
+  outline: none;
 }
 
-/* ========= BOTONES ========= */
+/* ======= BOTONES ======= */
 button {
-    padding: 10px 20px;
-    margin: 5px 0;
-    border: none;
-    border-radius: 6px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background-color: var(--primary);
-    color: white;
+  padding: 12px 20px;
+  font-size: 1em;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+  font-weight: bold;
 }
 
 button:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 button:active {
-    transform: scale(0.95);
+  transform: scale(0.97);
 }
 
-/* Botones de acciones específicas */
-.btn-success {
-    background-color: var(--success);
+.btn-azul {
+  background-color: var(--azul-carrefour);
+  color: white;
 }
 
-.btn-success:hover {
-    background-color: #218838;
+.btn-azul:hover {
+  background-color: var(--azul-claro);
 }
 
-.btn-danger {
-    background-color: var(--danger);
+.btn-verde {
+  background-color: var(--verde-confirmado);
+  color: white;
 }
 
-.btn-danger:hover {
-    background-color: #c82333;
+.btn-verde:hover {
+  background-color: #1e7e34;
 }
 
-/* ========= LISTAS Y PRODUCTOS ========= */
+.btn-rojo {
+  background-color: var(--rojo-claro);
+  color: white;
+}
+
+.btn-rojo:hover {
+  background-color: #c0392b;
+}
+
+/* ======= LISTA DE PRODUCTOS Y CARRITO ======= */
 ul {
-    list-style: none;
-    padding: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-bottom: 1px solid #444;
-    animation: fadeInUp 0.5s ease-in-out;
-    transition: all 0.3s ease-in-out;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px;
+  border-bottom: 1px solid #ddd;
+  background-color: #fff;
+  transition: background 0.2s;
 }
 
 li:hover {
-    background-color: #3b4d61;
-    transform: scale(1.01);
+  background-color: #f0f8ff;
 }
 
-/* ========= CARDS / BLOQUES ========= */
-section {
-    margin-bottom: 40px;
+span {
+  flex: 1;
+  margin-right: 10px;
+  font-size: 1em;
 }
 
-/* ========= CHECKOUT / TOTALES ========= */
-#checkout p,
+/* ======= TOTAL CARRITO ======= */
+#checkout p {
+  text-align: right;
+  font-size: 1.8em;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
 #total-price {
-    font-size: 1.8em;
-    font-weight: bold;
-    text-align: right;
-    margin: 10px 0;
+  color: var(--verde-confirmado);
 }
 
-#total-price {
-    color: var(--success);
+/* ======= RESULTADOS DE BÚSQUEDA ======= */
+#product-result {
+  margin-top: 20px;
 }
 
-/* ========= RESULTADOS ========= */
 #product-result p {
-    color: var(--primary);
-    font-weight: bold;
-    margin: 10px 0;
+  color: var(--azul-carrefour);
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
-/* ========= MODAL ========= */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(6px);
-}
-
-.modal-content {
-    background-color: var(--card-bg);
-    margin: 10% auto;
-    padding: 25px;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 600px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-    text-align: center;
-    color: white;
-}
-
-.modal .close {
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.modal .close:hover {
-    color: #f44336;
-}
-
-.modal button {
-    background-color: #444;
-    color: white;
-    padding: 10px 20px;
-    margin-top: 15px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-}
-
-.modal button:hover {
-    background-color: #555;
-}
-
-/* ========= LOADING SCREEN ========= */
+/* ======= LOADING ======= */
 #loading-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.85);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease-out;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(255,255,255,0.9);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.5s ease-out;
 }
 
 #loading-screen.hidden {
-    opacity: 0;
-    pointer-events: none;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid rgba(255, 255, 255, 0.3);
-    border-top: 4px solid white;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+  width: 45px;
+  height: 45px;
+  border: 5px solid #ccc;
+  border-top: 5px solid var(--azul-carrefour);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-/* ========= ANIMACIONES ========= */
+/* ======= MODAL ======= */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  backdrop-filter: blur(3px);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.modal .close {
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+  color: #999;
+  cursor: pointer;
+}
+
+.modal .close:hover {
+  color: var(--rojo-claro);
+}
+
+/* ======= ANIMACIONES ======= */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-/* ========= CAMPOS ADICIONALES ========= */
+/* ======= CAMPOS EXTRA ======= */
 #product-unit,
 #is-bulk {
-    margin: 0.5rem 0;
-    display: block;
+  margin: 10px 0;
+  display: block;
+  font-size: 1em;
 }
