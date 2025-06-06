@@ -610,42 +610,41 @@ function finalizeSale(metodoPago) {
   updateTotalPrice();
 }
 function showSalesSummary() {
-    const sales = JSON.parse(localStorage.getItem('sales')) || [];
+    const ventas = getVentas(); // fuente unificada
     let summary = '';
     let totalCash = 0;
     let totalTransfer = 0;
 
-    sales.forEach((sale, index) => {
-        summary += `Venta #${index + 1} - ${sale.timestamp} - Método: ${sale.paymentMethod}\n`;
+    ventas.forEach((venta, index) => {
+        summary += `🧾 Venta #${index + 1} - ${venta.group} - Método: ${venta.metodoPago}\n`;
 
         const grouped = {};
-        sale.cart.forEach(p => {
-            if (!grouped[p.name]) grouped[p.name] = 0;
-            grouped[p.name] += p.quantity;
+        venta.items.forEach(item => {
+            if (!grouped[item.name]) grouped[item.name] = 0;
+            grouped[item.name] += item.quantity;
         });
 
         for (const [name, qty] of Object.entries(grouped)) {
             summary += `  ${qty} x ${name}\n`;
         }
 
-        const saleTotal = sale.cart.reduce((acc, p) => acc + p.price * p.quantity, 0);
-        summary += `  Total venta: $${saleTotal.toFixed(2)}\n`;
+        const totalVenta = venta.items.reduce((acc, p) => acc + (p.price * p.quantity), 0);
+        summary += `  Total venta: $${totalVenta.toFixed(2)}\n`;
 
-        // Mostrar novedades si existen
-        if (sale.novedades && sale.novedades.trim() !== "") {
-            summary += `  📝 Novedades: ${sale.novedades}\n`;
+        if (venta.novedades && venta.novedades.trim() !== "") {
+            summary += `  📝 Novedades: ${venta.novedades}\n`;
         }
 
         summary += '\n';
 
-        if (sale.paymentMethod === 'efectivo') totalCash += saleTotal;
-        if (sale.paymentMethod === 'transferencia') totalTransfer += saleTotal;
+        if (venta.metodoPago.toLowerCase().includes("efectivo")) totalCash += totalVenta;
+        if (venta.metodoPago.toLowerCase().includes("transfer")) totalTransfer += totalVenta;
     });
 
-    summary += `\nApertura de caja: $${getOpeningCash().toFixed(2)}`;
-    summary += `\nTotal efectivo: $${totalCash.toFixed(2)}`;
-    summary += `\nTotal transferencia: $${totalTransfer.toFixed(2)}`;
-    summary += `\nTotal vendido: $${(totalCash + totalTransfer).toFixed(2)}`;
+    summary += `Apertura de caja: $${getOpeningCash().toFixed(2)}\n`;
+    summary += `Total efectivo: $${totalCash.toFixed(2)}\n`;
+    summary += `Total transferencia: $${totalTransfer.toFixed(2)}\n`;
+    summary += `Total vendido: $${(totalCash + totalTransfer).toFixed(2)}`;
 
     const textarea = document.getElementById('sales-summary');
     textarea.value = summary;
