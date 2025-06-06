@@ -573,9 +573,10 @@ function finalizeSale(metodoPago) {
   // ✅ Tomar novedad desde campo opcional
   const novedad = document.getElementById('novedad')?.value || '';
   const group = new Date().toLocaleString();
+
+  // ✅ Obtener ventas antes de guardar
   const ventas = getVentas();
 
-  
   ventas.push({
     group,
     items: cart,
@@ -584,7 +585,6 @@ function finalizeSale(metodoPago) {
   });
 
   saveVentas(ventas);
-
   saveProducts(products);
 
   document.getElementById('cart').innerHTML = '';
@@ -593,6 +593,7 @@ function finalizeSale(metodoPago) {
   displayProducts();
   updateTotalPrice();
 }
+
 function showSalesSummary() {
     const ventas = getVentas(); // fuente unificada
     let summary = '';
