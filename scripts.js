@@ -217,23 +217,7 @@ function addToCart(product) {
     cartList.appendChild(li);
   }
 
-  // Guardar venta en localStorage
-  const ventas = getVentas();
-  ventas.push({
-    code: product.code,
-    name: product.name,
-    cantidadVendida: quantity,
-    unit: product.unit,
-    price: product.price,
-    precioFinal: precioFinal,
-    cost: product.cost,
-    rendimiento: (precioFinal / product.cost).toFixed(2),
-    isBulk: product.isBulk
-  });
-  saveVentas(ventas);
-
-updateTotalPrice();
-
+  updateTotalPrice();
 }
 
 function editCartItemPrice(code) {
