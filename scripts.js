@@ -611,7 +611,7 @@ function finalizeSale(metodoPago) {
 }
 
 function showSalesSummary() {
-    const ventas = getSales();
+    const ventas = getVentas();
     let summary = "";
 
     ventas.forEach(v => {
