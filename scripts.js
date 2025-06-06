@@ -548,32 +548,33 @@ function finalizeSale(method) {
 
     cartItems.forEach(item => {
         const code = item.dataset.code;
-        const name = item.querySelector('span').textContent.split(' - ')[1].trim();
-        const price = parseFloat(item.textContent.split('$')[1].split('-')[0].trim());
-        const quantity = parseInt(item.querySelector('.quantity').textContent);
-
+        const quantity = parseFloat(item.querySelector('.quantity').textContent);
+        const totalPrice = parseFloat(item.querySelector('.price').textContent);
         const product = products.find(p => p.code === code);
+
         if (product && product.quantity >= quantity) {
             product.quantity -= quantity;
             product.sold = (product.sold || 0) + quantity;
         } else {
-            alert(`No hay suficiente stock de ${name}`);
+            alert(`No hay suficiente stock de ${product.name}`);
             hasStockIssue = true;
         }
 
+        // Calcular precio unitario real
+        const unitPrice = totalPrice / quantity;
+
         cart.push({
             code,
-            name,
-            price,
+            name: product.name,
+            price: unitPrice,
             quantity,
-            cost: product ? product.cost || 0 : 0
+            cost: product.cost || 0
         });
     });
 
     if (hasStockIssue) return;
 
     const novedades = prompt("¿Desea agregar alguna novedad sobre esta venta? (opcional)") || "";
-
     const sales = JSON.parse(localStorage.getItem('sales')) || [];
     const timestamp = new Date().toLocaleString();
     sales.push({ cart, paymentMethod: method, timestamp, novedades });
