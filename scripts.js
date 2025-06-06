@@ -601,18 +601,21 @@ function showSalesSummary() {
         sale.cart.forEach(p => {
             const subtotal = p.price * p.quantity;
             const costoTotal = (p.cost || 0) * p.quantity;
-            summary += `  ${p.quantity} x ${p.name} | Precio: $${p.price.toFixed(2)} | Costo: $${(p.cost || 0).toFixed(2)} | Subtotal: $${subtotal.toFixed(2)}\n`;
+            const ganancia = subtotal - costoTotal;
+
+            summary += `  🛒 ${p.quantity} x ${p.name} | $${p.price.toFixed(2)} c/u | Costo $${(p.cost || 0).toFixed(2)} c/u | Subtotal: $${subtotal.toFixed(2)} | Ganancia: $${ganancia.toFixed(2)}\n`;
+
             totalCostos += costoTotal;
         });
 
         const totalVenta = sale.cart.reduce((acc, p) => acc + (p.price * p.quantity), 0);
         const totalCosto = sale.cart.reduce((acc, p) => acc + ((p.cost || 0) * p.quantity), 0);
-        const ganancia = totalVenta - totalCosto;
-        totalGanancia += ganancia;
+        const gananciaVenta = totalVenta - totalCosto;
+        totalGanancia += gananciaVenta;
 
-        summary += `  Total venta: $${totalVenta.toFixed(2)}\n`;
-        summary += `  Costo total: $${totalCosto.toFixed(2)}\n`;
-        summary += `  Ganancia: $${ganancia.toFixed(2)}\n`;
+        summary += `  💲 Total venta: $${totalVenta.toFixed(2)}\n`;
+        summary += `  📦 Costo total: $${totalCosto.toFixed(2)}\n`;
+        summary += `  📈 Ganancia: $${gananciaVenta.toFixed(2)}\n`;
 
         if (sale.novedades && sale.novedades.trim() !== "") {
             summary += `  📝 Novedades: ${sale.novedades}\n`;
@@ -620,20 +623,21 @@ function showSalesSummary() {
 
         summary += '\n';
 
-        if (sale.paymentMethod === 'efectivo') totalCash += totalVenta;
-        if (sale.paymentMethod === 'transferencia') totalTransfer += totalVenta;
+        if (sale.paymentMethod.toLowerCase().includes("efectivo")) totalCash += totalVenta;
+        if (sale.paymentMethod.toLowerCase().includes("transfer")) totalTransfer += totalVenta;
     });
 
     summary += `\n🔓 Apertura de caja: $${getOpeningCash().toFixed(2)}`;
     summary += `\n💰 Total efectivo: $${totalCash.toFixed(2)}`;
     summary += `\n💳 Total transferencia: $${totalTransfer.toFixed(2)}`;
-    summary += `\n🧮 Costo total de productos vendidos: $${totalCostos.toFixed(2)}`;
+    summary += `\n📦 Costo total de productos vendidos: $${totalCostos.toFixed(2)}`;
     summary += `\n📈 Ganancia total: $${totalGanancia.toFixed(2)}`;
     summary += `\n💵 Total vendido: $${(totalCash + totalTransfer).toFixed(2)}`;
 
     const textarea = document.getElementById('sales-summary');
     textarea.value = summary;
 }
+
 
 
 
@@ -655,10 +659,20 @@ function downloadSummary() {
 function resetDay() {
     localStorage.removeItem('sales');
     localStorage.removeItem('openingCash');
+    localStorage.removeItem('openingCashSet');
+    localStorage.removeItem('totalVendido');
+
+    const products = getProducts();
+    products.forEach(p => p.sold = 0);
+    saveProducts(products);
+
     document.getElementById("sales-summary").value = "";
     document.getElementById("opening-cash").disabled = false;
-    alert("Total vendido y caja reseteados.");
+
+    displayProducts();
+    alert("Caja, ventas y arqueo limpiados exitosamente.");
 }
+
 
 function getVentas() {
   return JSON.parse(localStorage.getItem('ventas')) || [];
