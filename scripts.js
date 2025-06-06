@@ -420,24 +420,29 @@ window.onclick = function(event) {
 
 
 function limpiarTotalVendido() {
-    // Eliminar el total vendido del almacenamiento local
+    // Borrar total de vendido (por compatibilidad)
     localStorage.removeItem('totalVendido');
-    
-    // Obtener los productos almacenados
+
+    // Borrar historial real de ventas
+    localStorage.removeItem('ventas');
+
+    // Borrar apertura de caja
+    localStorage.removeItem('openingCash');
+    localStorage.setItem('openingCashSet', 'false');
+
+    // Resetear 'sold' en los productos
     const products = getProducts();
-
-    // Restablecer las cantidades vendidas (sold) de todos los productos
     products.forEach(product => {
-        product.sold = 0; // Reiniciar las ventas a 0
+        product.sold = 0;
     });
-
-    // Guardar los productos actualizados
     saveProducts(products);
 
-    // Actualizar la interfaz de usuario
+    // Actualizar interfaz
     displayProducts();
+    document.getElementById("sales-summary").value = '';
+    document.getElementById("opening-cash").disabled = false;
 
-    alert('Total Vendido y ventas anteriores limpiados para el nuevo turno.');
+    alert('Turno reiniciado. Todo el historial fue limpiado.');
 }
 
 
