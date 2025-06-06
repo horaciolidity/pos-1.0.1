@@ -599,11 +599,14 @@ function showSalesSummary() {
         summary += `🧾 Venta #${index + 1} - ${sale.timestamp} - Método: ${sale.paymentMethod}\n`;
 
         sale.cart.forEach(p => {
-            const subtotal = p.price * p.quantity;
-            const costoTotal = (p.cost || 0) * p.quantity;
+            const quantity = parseFloat(p.quantity);
+            const price = parseFloat(p.price);
+            const cost = parseFloat(p.cost || 0);
+            const subtotal = price * quantity;
+            const costoTotal = cost * quantity;
             const ganancia = subtotal - costoTotal;
 
-            summary += `  🛒 ${p.quantity} x ${p.name} | $${p.price.toFixed(2)} c/u | Costo $${(p.cost || 0).toFixed(2)} c/u | Subtotal: $${subtotal.toFixed(2)} | Ganancia: $${ganancia.toFixed(2)}\n`;
+            summary += `  🛒 ${quantity} x ${p.name} | Precio u.: $${price.toFixed(2)} | Costo u.: $${cost.toFixed(2)} | Subtotal: $${subtotal.toFixed(2)} | Ganancia: $${ganancia.toFixed(2)}\n`;
 
             totalCostos += costoTotal;
         });
