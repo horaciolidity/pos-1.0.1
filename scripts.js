@@ -611,32 +611,36 @@ function finalizeSale(metodoPago) {
 }
 
 function showSalesSummary() {
-    const ventas = getVentas();
+    const ventas = getSales();
     let summary = "";
 
     ventas.forEach(v => {
-        const group = v.group;
+        const group = v.group || "Sin grupo";
         const novedades = v.novedades || "";
         summary += `Grupo: ${group}\nProducto\tCantidad\tPrecio Venta\tCosto\tGanancia\n`;
         let totalGrupo = 0;
         let gananciaGrupo = 0;
 
-        v.items.forEach(item => {
-            const itemTotal = item.price * item.quantity;
-            const ganancia = (item.price - item.cost) * item.quantity;
-            summary += `${item.name}\t${item.quantity}\t$${item.price}\t$${item.cost}\t$${ganancia.toFixed(2)}\n`;
-            totalGrupo += itemTotal;
-            gananciaGrupo += ganancia;
-        });
+        if (Array.isArray(v.items)) {
+            v.items.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                const ganancia = (item.price - item.cost) * item.quantity;
+                summary += `${item.name}\t${item.quantity}\t$${item.price}\t$${item.cost}\t$${ganancia.toFixed(2)}\n`;
+                totalGrupo += itemTotal;
+                gananciaGrupo += ganancia;
+            });
+        } else {
+            summary += `⚠️ No hay productos registrados en este grupo.\n`;
+        }
 
-        summary += `Total del Grupo: $${totalGrupo.toFixed(2)}\nGanancia Total: $${gananciaGrupo.toFixed(2)}\n`;
-        summary += `Pago: ${v.metodoPago}\n`;
-        if (novedades) summary += `Novedades: ${novedades}\n`;
+        summary += `TOTAL GRUPO: $${totalGrupo.toFixed(2)}\nGANANCIA GRUPO: $${gananciaGrupo.toFixed(2)}\n`;
+        summary += novedades ? `Novedades: ${novedades}\n` : "";
         summary += `-----------------------------\n`;
     });
 
-    document.getElementById("sales-summary").value = summary;
+    alert(summary || "No hay ventas registradas.");
 }
+
 
 function payWithTransfer() {
     finalizeSale('Transferido');
