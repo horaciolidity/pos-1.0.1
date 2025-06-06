@@ -1,256 +1,329 @@
-/* ======= PALETA TIPO CARREFOUR POS ======= */
-:root {
-  --azul-carrefour: #005bac;
-  --azul-claro: #4fa3ff;
-  --verde-confirmado: #28a745;
-  --gris-suave: #f5f6fa;
-  --gris-texto: #4b4b4b;
-  --rojo-claro: #e74c3c;
-  --fuente-principal: 'Segoe UI', Tahoma, sans-serif;
-}
-
-/* ======= RESETEO GENERAL ======= */
+/* Estilos Generales */
 body {
-  margin: 0;
-  padding: 0;
-  font-family: var(--fuente-principal);
-  background-color: var(--gris-suave);
-  color: var(--gris-texto);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    margin: 0;
+    padding: 0;
 }
 
-/* ======= ENCABEZADOS ======= */
 h1 {
-  text-align: center;
-  font-size: 2.5em;
-  margin: 30px 0 10px;
-  color: var(--azul-carrefour);
-  font-weight: bold;
+    text-align: center;
+    color: white; /* Color del texto transparente para el efecto de gradiente */
+    background: linear-gradient(45deg, #FF5733, #FFBD33, #75FF33, #33FFBD, #339FFF); /* Gradiente floral */
+    -webkit-background-clip: text; /* Clipa el fondo al texto */
+    background-clip: text; /* Clipa el fondo al texto */
+    font-size: 3em; 
+    font-weight: bold; 
+    margin: 20px 0; 
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4); /* Sombra sutil del texto */
+    padding: 20px 15px; 
+    border-radius: 10px; 
+    border: 2px solid rgba(255, 255, 255, 0.3); /* Borde semitransparente */
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
+    letter-spacing: 1.5px; /* Espaciado entre letras */
 }
+
+
 
 h2 {
-  text-align: center;
-  font-size: 1.4em;
-  color: var(--azul-carrefour);
-  margin: 15px 0;
+    text-align: center;
+    color: #ecf0f1; 
+    font-size: 1.5em; 
+    margin: 15px 0; 
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); 
 }
 
-/* ======= CONTENEDOR PRINCIPAL ======= */
+
+
 .container {
-  max-width: 1080px;
-  margin: 30px auto;
-  padding: 30px;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background: transparent; /* Fondo totalmente transparente */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 1s ease-in-out;
+    position: relative; /* Permite que los elementos dentro se manejen con z-index */
+    z-index: 1; /* Asegura que esté por encima de la imagen */
 }
 
-/* ======= SECCIONES Y FORMULARIOS ======= */
+
 section {
-  margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
-form, #product-form, #product-search, #checkout {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  align-items: center;
-  justify-content: space-between;
+/* Formularios */
+#product-form, #product-search, #checkout {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-input[type="text"],
-input[type="number"] {
-  flex: 1 1 200px;
-  padding: 12px;
-  font-size: 1em;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: #fff;
-  color: #000;
-  transition: border-color 0.3s ease;
+input[type="text"], input[type="number"] {
+    flex: 1;
+    padding: 10px;
+    margin: 0 5px; /* Agrega margen lateral de 5px */
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+    background-color: #ecf0f1;
+    color: #2c3e50;
 }
 
-input:focus {
-  border-color: var(--azul-carrefour);
-  outline: none;
+input[type="text"]:focus, input[type="number"]:focus {
+    border-color: #007bff;
+    outline: none;
 }
 
-/* ======= BOTONES ======= */
+
+
+
 button {
-  padding: 12px 20px;
-  font-size: 1em;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s;
-  font-weight: bold;
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
 }
 
 button:hover {
-  transform: scale(1.03);
+    background-color: #0056b3;
+    transform: scale(1.05);
 }
 
 button:active {
-  transform: scale(0.97);
+    transform: scale(0.95);
 }
 
-.btn-azul {
-  background-color: var(--azul-carrefour);
-  color: white;
-}
-
-.btn-azul:hover {
-  background-color: var(--azul-claro);
-}
-
-.btn-verde {
-  background-color: var(--verde-confirmado);
-  color: white;
-}
-
-.btn-verde:hover {
-  background-color: #1e7e34;
-}
-
-.btn-rojo {
-  background-color: var(--rojo-claro);
-  color: white;
-}
-
-.btn-rojo:hover {
-  background-color: #c0392b;
-}
-
-/* ======= LISTA DE PRODUCTOS Y CARRITO ======= */
+/* Listas */
 ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+    list-style-type: none;
+    padding: 0;
 }
 
 li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px;
-  border-bottom: 1px solid #ddd;
-  background-color: #fff;
-  transition: background 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #bdc3c7;
+    animation: fadeInUp 0.5s ease-in-out;
 }
 
-li:hover {
-  background-color: #f0f8ff;
+li:last-child {
+    border-bottom: none;
 }
 
 span {
-  flex: 1;
-  margin-right: 10px;
-  font-size: 1em;
+    flex: 1;
+    margin-right: 10px;
 }
 
-/* ======= TOTAL CARRITO ======= */
+/* Carrito */
 #checkout p {
-  text-align: right;
-  font-size: 1.8em;
-  font-weight: bold;
-  margin-top: 10px;
+    text-align: right;
+    font-size: 2em;
+    font-weight: bold;
+    color: #ecf0f1;
 }
 
 #total-price {
-  color: var(--verde-confirmado);
+    color: #28a745;
+    font-size: 2em;
 }
 
-/* ======= RESULTADOS DE BÚSQUEDA ======= */
+/* Resultados de búsqueda */
+#product-result p {
+    margin: 10px 0;
+}
+
+#product-result button {
+    margin-top: 10px;
+}
+
+/* Botones de acción en la lista de productos */
+#product-list button, #checkout button {
+    padding: 5px 10px;
+    background-color: #dc3545;
+    margin-left: 5px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+#product-list button:hover, #checkout button:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}
+
+#product-list button:active, #checkout button:active {
+    transform: scale(0.95);
+}
+
+#product-list button:nth-child(2), #checkout button:nth-child(2) {
+    background-color: #28a745;
+}
+
+#product-list button:nth-child(2):hover, #checkout button:nth-child(2):hover {
+    background-color: #218838;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Agregar una transición suave a los elementos de la lista */
+ul li {
+    transition: all 0.3s ease-in-out;
+}
+
+ul li:hover {
+    background-color: #3b4d61;
+    transform: scale(1.02);
+}
+
+/* Estilos adicionales para entradas de búsqueda */
+#product-search {
+    margin-top: 20px;
+}
+
 #product-result {
-  margin-top: 20px;
+    margin-top: 20px;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
 #product-result p {
-  color: var(--azul-carrefour);
-  font-weight: bold;
-  margin-bottom: 10px;
+    font-weight: bold;
+    color: #007bff;
 }
 
-/* ======= LOADING ======= */
 #loading-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: rgba(255,255,255,0.9);
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  transition: opacity 0.5s ease-out;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1; /* Inicialmente completamente visible */
+    transition: opacity 0.5s ease-out; /* Transición suave */
 }
 
 #loading-screen.hidden {
-  opacity: 0;
-  pointer-events: none;
+    opacity: 0; /* Ocultar lentamente */
+    pointer-events: none; /* Evitar interacción */
+}
+
+#loading-image {
+    width: 200px; /* Imagen más pequeña */
+    height: auto;
+    position: relative;
 }
 
 .spinner {
-  width: 45px;
-  height: 45px;
-  border: 5px solid #ccc;
-  border-top: 5px solid var(--azul-carrefour);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-/* ======= MODAL ======= */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  backdrop-filter: blur(3px);
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background-color: white;
-  padding: 25px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.2);
-  text-align: center;
-}
-
-.modal .close {
-  float: right;
-  font-size: 24px;
-  font-weight: bold;
-  color: #999;
-  cursor: pointer;
-}
-
-.modal .close:hover {
-  color: var(--rojo-claro);
-}
-
-/* ======= ANIMACIONES ======= */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+    border: 4px solid rgba(255, 255, 255, 0.3); /* Borde externo semitransparente */
+    border-top: 4px solid white; /* Color del spinner */
+    border-radius: 50%;
+    width: 40px; /* Spinner más pequeño */
+    height: 40px;
+    margin-bottom: 20px; /* Separación con la imagen */
+    animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+/* Estilos básicos para el modal */
+/* Estilos básicos para el modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro con opacidad */
+    backdrop-filter: blur(5px); /* Efecto de desenfoque en el fondo */
 }
 
-/* ======= CAMPOS EXTRA ======= */
+.modal-content {
+    background-color: #1e1e1e; /* Fondo oscuro para el contenido del modal */
+    color: #ffffff; /* Texto blanco para contraste */
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #444; /* Bordes más sutiles y oscuros */
+    width: 70%;
+    max-width: 600px; /* Limitar el ancho máximo del modal */
+    border-radius: 10px; /* Bordes redondeados para un estilo moderno */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
+    text-align: center;
+}
+
+/* Estilo para el botón de cerrar */
+.close {
+    color: #ffffff; /* Texto blanco */
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover,
+.close:focus {
+    color: #f44336; /* Rojo para hover o enfoque */
+    text-decoration: none;
+}
+
+/* Estilo para los botones dentro del modal */
+.modal button {
+    background-color: #444; /* Fondo oscuro en los botones */
+    color: #ffffff; /* Texto blanco */
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.modal button:hover {
+    background-color: #555; /* Cambia el fondo al pasar el cursor */
+}
+
 #product-unit,
 #is-bulk {
-  margin: 10px 0;
+  margin: 0.5rem 0;
   display: block;
-  font-size: 1em;
 }
