@@ -604,47 +604,55 @@ function showSalesSummary() {
     let summary = '';
     let totalCash = 0;
     let totalTransfer = 0;
+    let totalCostos = 0;
+    let totalGanancia = 0;
 
     ventas.forEach((venta, index) => {
-    if (!venta || !Array.isArray(venta.items)) {
-        console.warn(`Venta #${index + 1} inválida o sin items.`, venta);
-        return;
-    }
+        if (!venta || !Array.isArray(venta.items)) {
+            console.warn(`Venta #${index + 1} inválida o sin items.`, venta);
+            return;
+        }
 
-    summary += `🧾 Venta #${index + 1} - ${venta.group} - Método: ${venta.metodoPago}\n`;
+        summary += `🧾 Venta #${index + 1} - ${venta.group} - Método: ${venta.metodoPago}\n`;
 
-    const grouped = {};
-    venta.items.forEach(item => {
-        if (!grouped[item.name]) grouped[item.name] = 0;
-        grouped[item.name] += item.quantity;
+        const grouped = {};
+        venta.items.forEach(item => {
+            if (!grouped[item.name]) grouped[item.name] = 0;
+            grouped[item.name] += item.quantity;
+        });
+
+        for (const [name, qty] of Object.entries(grouped)) {
+            summary += `  ${qty} x ${name}\n`;
+        }
+
+        const totalVenta = venta.items.reduce((acc, p) => acc + (p.price * p.quantity), 0);
+        const totalCosto = venta.items.reduce((acc, p) => acc + ((p.cost || 0) * p.quantity), 0);
+        const ganancia = totalVenta - totalCosto;
+
+        totalCostos += totalCosto;
+        totalGanancia += ganancia;
+
+        summary += `  Total venta: $${totalVenta.toFixed(2)}\n`;
+        summary += `  Costo total: $${totalCosto.toFixed(2)}\n`;
+        summary += `  Ganancia: $${ganancia.toFixed(2)}\n`;
+
+        if (venta.novedades && venta.novedades.trim() !== "") {
+            summary += `  📝 Novedades: ${venta.novedades}\n`;
+        }
+
+        summary += '\n';
+
+        if (venta.metodoPago.toLowerCase().includes("efectivo")) totalCash += totalVenta;
+        if (venta.metodoPago.toLowerCase().includes("transfer")) totalTransfer += totalVenta;
     });
 
-    for (const [name, qty] of Object.entries(grouped)) {
-        summary += `  ${qty} x ${name}\n`;
-    }
+    summary += `💰 Total en Efectivo: $${totalCash.toFixed(2)}\n`;
+    summary += `💳 Total en Transferencias: $${totalTransfer.toFixed(2)}\n`;
+    summary += `🧮 Costo total de productos vendidos: $${totalCostos.toFixed(2)}\n`;
+    summary += `📈 Ganancia total: $${totalGanancia.toFixed(2)}\n`;
 
-    const totalVenta = venta.items.reduce((acc, p) => acc + (p.price * p.quantity), 0);
-    summary += `  Total venta: $${totalVenta.toFixed(2)}\n`;
-
-    if (venta.novedades && venta.novedades.trim() !== "") {
-        summary += `  📝 Novedades: ${venta.novedades}\n`;
-    }
-
-    summary += '\n';
-
-    if (venta.metodoPago.toLowerCase().includes("efectivo")) totalCash += totalVenta;
-    if (venta.metodoPago.toLowerCase().includes("transfer")) totalTransfer += totalVenta;
-});
-
-    summary += `Apertura de caja: $${getOpeningCash().toFixed(2)}\n`;
-    summary += `Total efectivo: $${totalCash.toFixed(2)}\n`;
-    summary += `Total transferencia: $${totalTransfer.toFixed(2)}\n`;
-    summary += `Total vendido: $${(totalCash + totalTransfer).toFixed(2)}`;
-
-    const textarea = document.getElementById('sales-summary');
-    textarea.value = summary;
+    alert(summary);
 }
-
 
 function payWithTransfer() {
     finalizeSale('Transferido');
