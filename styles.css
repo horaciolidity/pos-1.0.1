@@ -63,7 +63,7 @@ section {
 }
 
 input[type="text"], input[type="number"] {
-    flex: 0 1 150px; /* ancho más controlado y flexible */
+    flex: 0 1 270px; /* ancho más controlado y flexible */
     padding: 6px 8px; /* menos padding para hacerlo más chico */
     margin: 5px; /* espacio uniforme alrededor */
     border: 1px solid #bdc3c7;
