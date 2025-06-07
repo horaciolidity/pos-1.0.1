@@ -62,21 +62,54 @@ section {
     margin-bottom: 20px;
 }
 
-input[type="text"], input[type="number"] {
-    flex: 1;
-    padding: 10px;
-    margin: 0 5px; /* Agrega margen lateral de 5px */
-    border: 1px solid #bdc3c7;
-    border-radius: 5px;
+/* ===== ESTILOS MODERNIZADOS ===== */
+
+/* Estilo general para inputs */
+input[type="text"],
+input[type="number"],
+input[type="password"],
+textarea,
+select {
+    width: 100%;
+    max-width: 350px;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f0f0f0, #d9d9d9);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
     font-size: 1em;
-    transition: border-color 0.3s;
-    background-color: #ecf0f1;
-    color: #2c3e50;
+    color: #333;
+    margin-bottom: 12px;
+    transition: all 0.3s ease-in-out;
 }
 
-input[type="text"]:focus, input[type="number"]:focus {
-    border-color: #007bff;
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
     outline: none;
+    background: linear-gradient(135deg, #ffffff, #e0e0e0);
+    box-shadow: 0 0 0 3px rgba(80, 160, 255, 0.5);
+}
+
+/* Ventana de novedades */
+#novedades,
+.novedades {
+    background: linear-gradient(145deg, #f8f9fa, #e8ecf0);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    color: #222;
+    font-size: 1em;
+}
+
+/* Campo de peso/kilo */
+input[name="peso"],
+input[name="kilo"] {
+    background: linear-gradient(135deg, #ffe0b2, #ffcc80);
+    color: #4e342e;
+    font-weight: bold;
 }
 
 
