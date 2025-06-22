@@ -224,15 +224,17 @@ function addToCart(product) {
     `;
     cartList.appendChild(li);
   }
-if (typeof notificarCliente === 'function') {
-  notificarCliente(product.name, product.price, quantity);
-}
+
+  if (typeof notificarCliente === 'function') {
+    notificarCliente(product.name, product.price, quantity);
+  }
 
   updateTotalPrice();
-}
-if (typeof enviarCarritoAlCliente === 'function') {
+
+  if (typeof enviarCarritoAlCliente === 'function') {
     enviarCarritoAlCliente();
   }
+}
 
 function editCartItemPrice(code) {
   const cartList = document.getElementById('cart');
@@ -266,7 +268,7 @@ function removeQuantity(code) {
 
     if (existingItem) {
         const quantitySpan = existingItem.querySelector('.quantity');
-        const currentQuantity = parseInt(quantitySpan.textContent);
+        const currentQuantity = parseFloat(quantitySpan.textContent);
 
         if (currentQuantity > 1) {
             const newQuantity = currentQuantity - 1; // Decrementa la cantidad
