@@ -60,11 +60,14 @@ function addProduct() {
         saveProducts(products);
         displayProducts();
         updateTotalPrice();
-        enviarCarritoAlCliente();
+        if (typeof enviarCarritoAlCliente === 'function') {
+            enviarCarritoAlCliente();
+        }
 
         clearForm();
     }
 }
+
 
 
 function clearForm() {
