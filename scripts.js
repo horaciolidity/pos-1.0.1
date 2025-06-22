@@ -60,7 +60,7 @@ function addProduct() {
         saveProducts(products);
         displayProducts();
         updateTotalPrice();
-       
+        enviarCarritoAlCliente();
 
         clearForm();
     }
