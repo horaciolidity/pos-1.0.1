@@ -447,6 +447,9 @@ function limpiarTotalVendido() {
     document.getElementById("opening-cash").disabled = false;
 
     alert('Turno reiniciado. Todo el historial fue limpiado.');
+     if (typeof resetCliente === 'function') {
+        resetCliente();
+    }
 }
 
 
@@ -664,22 +667,6 @@ function downloadSummary() {
     document.body.removeChild(link);
 }
 
-function resetDay() {
-    localStorage.removeItem('sales');
-    localStorage.removeItem('openingCash');
-    localStorage.removeItem('openingCashSet');
-    localStorage.removeItem('totalVendido');
-
-    const products = getProducts();
-    products.forEach(p => p.sold = 0);
-    saveProducts(products);
-
-    document.getElementById("sales-summary").value = "";
-    document.getElementById("opening-cash").disabled = false;
-
-    displayProducts();
-    alert("Caja, ventas y arqueo limpiados exitosamente.");
-}
 
 
 function getVentas() {
@@ -698,3 +685,27 @@ function checkStock(product) {
         alert(`Quedan solo ${product.quantity} unidades de ${product.name}.`);
     }
 }
+
+function resetDay() {
+    localStorage.removeItem('sales');
+    localStorage.removeItem('openingCash');
+    localStorage.removeItem('openingCashSet');
+    localStorage.removeItem('totalVendido');
+
+    const products = getProducts();
+    products.forEach(p => p.sold = 0);
+    saveProducts(products);
+
+    document.getElementById("sales-summary").value = "";
+    document.getElementById("opening-cash").disabled = false;
+
+    displayProducts();
+
+    // 👉 Agregado
+    if (typeof resetCliente === 'function') {
+        resetCliente();
+    }
+
+    alert("Caja, ventas y arqueo limpiados exitosamente.");
+}
+
