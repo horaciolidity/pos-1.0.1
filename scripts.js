@@ -60,9 +60,7 @@ function addProduct() {
         saveProducts(products);
         displayProducts();
         updateTotalPrice();
-        if (typeof notificarCliente === 'function') {
-        notificarCliente(name, price, quantity);
-    }
+       
 
         clearForm();
     }
@@ -220,6 +218,9 @@ function addToCart(product) {
     `;
     cartList.appendChild(li);
   }
+if (typeof notificarCliente === 'function') {
+  notificarCliente(product.name, product.price, quantity);
+}
 
   updateTotalPrice();
 }
