@@ -626,6 +626,10 @@ function finalizeSale(method) {
   alert('Venta registrada con pago: ' + method);
   displayProducts();
   updateTotalPrice();
+
+    
+const canal = new BroadcastChannel('pos_channel');
+canal.postMessage({ tipo: 'despedida' });
 }
 
 function showSalesSummary() {
