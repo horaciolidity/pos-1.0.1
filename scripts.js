@@ -227,6 +227,9 @@ if (typeof notificarCliente === 'function') {
 
   updateTotalPrice();
 }
+if (typeof enviarCarritoAlCliente === 'function') {
+    enviarCarritoAlCliente();
+  }
 
 function editCartItemPrice(code) {
   const cartList = document.getElementById('cart');
