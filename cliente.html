@@ -4,19 +4,24 @@
   <meta charset="UTF-8">
   <title>Cliente</title>
   <style>
-   body {
-      background-color: #1a1a1a;
-      color: #ffffff;
-      font-size: 22px;
-      padding: 20px;
-      font-family: 'Segoe UI', sans-serif;
+  @font-face {
+      font-family: 'Digital';
+      src: local('Digital-7'), local('DS-Digital'), local('Courier New'), monospace;
+    }
+
+    body {
+      background-color: #000;
+      color: #00ff00;
+      font-family: 'Digital', monospace;
+      font-size: 26px;
+      padding: 30px;
     }
 
     h1, h2 {
       text-align: center;
-      font-size: 36px;
-      color: #00c6ff;
-      text-shadow: 2px 2px 4px #000;
+      font-size: 40px;
+      color: #00ff00;
+      text-shadow: 0 0 8px #00ff00;
     }
 
     ul#lista {
@@ -26,35 +31,34 @@
     }
 
     ul#lista li {
-      padding: 15px 20px;
-      margin-bottom: 10px;
-      background: #2e2e2e;
-      border-radius: 10px;
-      font-size: 24px;
-      font-weight: bold;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      padding: 18px 25px;
+      margin-bottom: 12px;
+      background: #111;
+      border-left: 5px solid #0f0;
+      border-radius: 8px;
+      font-size: 28px;
+      box-shadow: 0 0 5px #0f0;
     }
 
     #total {
-      text-align: center;
-      margin-top: 40px;
-      font-size: 40px;
+      font-size: 50px;
       font-weight: bold;
-      color: #00ffcc;
-      text-shadow: 1px 1px 2px #000;
+      color: #ffff00;
+      text-shadow: 0 0 10px #ff0, 1px 1px 3px #333;
+      display: inline-block;
     }
 
     @media (max-width: 768px) {
       body {
-        font-size: 18px;
-      }
-
-      ul#lista li {
         font-size: 20px;
       }
 
+      ul#lista li {
+        font-size: 22px;
+      }
+
       #total {
-        font-size: 32px;
+        font-size: 36px;
       }
     }
   </style>
