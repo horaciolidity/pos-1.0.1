@@ -1,19 +1,22 @@
 const canal = new BroadcastChannel('pos_channel');
-let totalCliente = 0;
 
-function notificarCliente(nombre, precio, cantidad) {
-  const subtotal = precio * cantidad;
-  totalCliente += subtotal;
+function enviarCarritoAlCliente() {
+  const cartList = document.getElementById('cart');
+  const items = Array.from(cartList.children).map(item => {
+    return {
+      nombre: item.querySelector('span').textContent.split(' - ')[0].trim(),
+      cantidad: parseFloat(item.querySelector('.quantity').textContent),
+      precioUnitario: parseFloat(item.querySelector('.price').textContent) /
+                      parseFloat(item.querySelector('.quantity').textContent),
+    };
+  });
+
   canal.postMessage({
-    tipo: 'producto',
-    nombre,
-    precio,
-    cantidad,
-    subtotal,
-    totalActual: totalCliente
+    tipo: 'carrito',
+    productos: items
   });
 }
+
 function resetCliente() {
-  totalCliente = 0;
   canal.postMessage({ tipo: 'reset' });
 }
