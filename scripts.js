@@ -267,6 +267,10 @@ function removeQuantity(code) {
         }
         updateTotalPrice(); // Actualiza el total
     }
+    if (typeof enviarCarritoAlCliente === 'function') {
+  enviarCarritoAlCliente();
+}
+
 }
 
 function addQuantity(code) {
@@ -288,6 +292,10 @@ function addQuantity(code) {
 
     updateTotalPrice();
   }
+    if (typeof enviarCarritoAlCliente === 'function') {
+  enviarCarritoAlCliente();
+}
+
 }
 
 function updateTotalPrice() {
