@@ -3,72 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <title>Cliente</title>
+  <link href="https://fonts.cdnfonts.com/css/ds-digital" rel="stylesheet">
+
   <style>
-@font-face {
-    font-family: 'Digital';
-    src: local('DS-Digital'), local('Digital-7'), url('https://fonts.cdnfonts.com/s/7532/DS-DIGI.TTF') format('truetype');
-    font-display: swap;
-  }
+body {
+      background-color: #000;
+      color: #00ff00;
+      font-family: 'DS-Digital', monospace;
+      font-size: 28px;
+      padding: 30px;
+    }
 
-  body {
-    background-color: #000;
-    color: #00ff00;
-    font-family: 'Digital', monospace;
-    font-size: 28px;
-    padding: 30px;
-  }
+    h1, h2 {
+      text-align: center;
+      font-size: 38px;
+      color: #00ff00;
+      text-shadow: 0 0 10px #0f0;
+      margin-bottom: 20px;
+    }
 
-  h1, h2 {
-    text-align: center;
-    font-size: 38px;
-    color: #00ff00;
-    text-shadow: 0 0 10px #0f0;
-    margin-bottom: 20px;
-  }
-
-  ul#lista {
-    list-style: none;
-    padding: 0;
-    margin-top: 30px;
-  }
-
-  ul#lista li {
-    padding: 18px 25px;
-    margin-bottom: 12px;
-    background: #111;
-    border-left: 5px solid #00ff00;
-    border-radius: 8px;
-    font-size: 32px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    box-shadow: 0 0 8px #00ff00;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  #total {
-    display: inline-block;
-    font-size: 52px;
-    font-weight: bold;
-    color: #ffff00;
-    text-shadow: 0 0 10px #ff0, 1px 1px 4px #222;
-    padding: 10px 20px;
-    border-radius: 5px;
-  }
-
-  @media (max-width: 768px) {
-    body {
-      font-size: 20px;
+    ul#lista {
+      list-style: none;
+      padding: 0;
+      margin-top: 30px;
     }
 
     ul#lista li {
-      font-size: 24px;
+      padding: 18px 25px;
+      margin-bottom: 12px;
+      background: #111;
+      border-left: 5px solid #00ff00;
+      border-radius: 8px;
+      font-size: 32px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      box-shadow: 0 0 8px #00ff00;
+      display: flex;
+      justify-content: space-between;
     }
 
     #total {
-      font-size: 36px;
+      display: inline-block;
+      font-size: 52px;
+      font-weight: bold;
+      color: #ffff00;
+      text-shadow: 0 0 10px #ff0, 1px 1px 4px #222;
+      padding: 10px 20px;
+      border-radius: 5px;
     }
-  }
   </style>
 </head>
 <body>
