@@ -125,6 +125,9 @@ function updateProduct(code) {
             product.quantity = quantityNumber; // Actualiza la cantidad del producto
             saveProducts(products); // Guarda el inventario actualizado
             displayProducts(); // Actualiza la vista de productos
+            updateTotalPrice();
+            enviarCarritoAlCliente();
+
             alert(`Cantidad de ${product.name} actualizada a ${quantityNumber}.`);
         } else {
             alert('Por favor, ingrese una cantidad válida.');
@@ -263,9 +266,11 @@ function removeQuantity(code) {
             const newQuantity = currentQuantity - 1; // Decrementa la cantidad
             quantitySpan.textContent = newQuantity; // Actualiza la cantidad en la interfaz
         } else {
-            existingItem.remove(); // Si la cantidad es 1, elimina el producto del carrito
+            existingItem.remove(); 
+            
         }
-        updateTotalPrice(); // Actualiza el total
+        updateTotalPrice(); 
+        enviarCarritoAlCliente();
     }
     if (typeof enviarCarritoAlCliente === 'function') {
   enviarCarritoAlCliente();
