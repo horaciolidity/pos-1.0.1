@@ -60,6 +60,10 @@ function addProduct() {
         saveProducts(products);
         displayProducts();
         updateTotalPrice();
+        if (typeof notificarCliente === 'function') {
+        notificarCliente(name, price, quantity);
+    }
+
         clearForm();
     }
 }
