@@ -24,4 +24,23 @@ canal.onmessage = (e) => {
     lista.innerHTML = '';
     total.textContent = '0.00';
   }
+
+  if (data.tipo === 'despedida') {
+    lista.innerHTML = '';
+    const mensaje = document.createElement('li');
+    mensaje.textContent = 'GRACIAS Y VUELVA PRONTO';
+    mensaje.style.textAlign = 'center';
+    mensaje.style.fontSize = '40px';
+    mensaje.style.color = '#ffff00';
+    mensaje.style.textShadow = '0 0 10px #ff0';
+    lista.appendChild(mensaje);
+
+    total.textContent = '0.00';
+
+    // Restaurar a estado inicial luego de 10 segundos
+    setTimeout(() => {
+      lista.innerHTML = '';
+      total.textContent = '0.00';
+    }, 10000);
+  }
 };
