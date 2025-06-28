@@ -412,3 +412,7 @@ a:hover {
   position: relative;
   text-align: center;
 }
+.lista-busqueda{max-height:160px;overflow-y:auto;margin:0;padding:0;list-style:none;border:1px solid #ddd}
+.lista-busqueda li{padding:.4em .6em;cursor:pointer}
+.lista-busqueda li:hover{background:#eee}
+.lista-busqueda .mute{color:#999;cursor:default}
