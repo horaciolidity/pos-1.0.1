@@ -94,19 +94,19 @@
   <ul id="lista"></ul>
   <h2>Total a pagar: $<span id="total">0.00</span></h2>
 
- <!-- Sección historial (debe estar en cliente.html) -->
-<div id="historial">
-  <h1 id="tituloHistorial">Historial de ventas –</h1>
-  <h2 id="deudaHistorial">💰 Total adeudado: $0.00</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Fecha</th><th>Hora</th><th>Producto</th><th>Cant.</th><th>Total $</th>
-      </tr>
-    </thead>
-    <tbody id="tablaHistorial"></tbody>
-  </table>
-</div>
+ <!-- Historial dinámico (solo se muestra si lo ordena la caja) -->
+  <div id="historial">
+    <h1 id="tituloHistorial">Historial de ventas –</h1>
+    <h2 id="deudaHistorial">💰 Total adeudado: $0.00</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th><th>Hora</th><th>Producto</th><th>Cant.</th><th>Total $</th>
+        </tr>
+      </thead>
+      <tbody id="tablaHistorial"></tbody>
+    </table>
+  </div>
 
 
   <script src="visor-cliente.js"></script>
