@@ -431,6 +431,7 @@ function consultarTotalVendido() {
     totalVendidoModal.textContent = totalVendido ? totalVendido : '0.00';
     
     ventasModal.style.display = 'flex'; // Mostrar el modal
+    modalClientes.style.display = 'flex';
 }
 
 // Cerrar el modal
