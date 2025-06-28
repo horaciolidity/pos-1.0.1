@@ -9,8 +9,7 @@ if (!session) {
 document.addEventListener('DOMContentLoaded', () => {
   if (!isAdmin) {
     document.querySelectorAll('.admin-only').forEach(btn => {
-      // elegí el efecto que prefieras: ocultar o solo deshabilitar
-      // btn.style.display = 'none';
+     
       btn.disabled = true;
     });
   }
@@ -28,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const yaInicioCaja = localStorage.getItem('openingCashSet') === 'true';
     if (yaInicioCaja) input.disabled = true;
 
-    // Animación de carga (si existe)
     setTimeout(() => {
         const loadingScreen = document.getElementById('loading-screen');
         if (loadingScreen) {
@@ -139,7 +137,6 @@ function displayProducts() {
     });
 }
 
-// Nueva función para actualizar el producto
 function updateProduct(code) {
     const products = getProducts();
     const product = products.find(p => p.code === code);
@@ -147,9 +144,9 @@ function updateProduct(code) {
     if (newQuantity !== null) {
         const quantityNumber = parseInt(newQuantity);
         if (quantityNumber >= 0) {
-            product.quantity = quantityNumber; // Actualiza la cantidad del producto
-            saveProducts(products); // Guarda el inventario actualizado
-            displayProducts(); // Actualiza la vista de productos
+            product.quantity = quantityNumber; 
+            saveProducts(products); 
+            displayProducts(); 
             updateTotalPrice();
             enviarCarritoAlCliente();
 
@@ -190,18 +187,15 @@ function scanProduct() {
         const cartList = document.getElementById('cart');
         const existingItem = Array.from(cartList.children).find(item => item.dataset.code === product.code);
 
-        // Verifica si el producto ya está en el carrito
         if (existingItem) {
-            // Solo se actualiza la cantidad en el carrito, no se descuenta del inventario
             const quantitySpan = existingItem.querySelector('.quantity');
-            const newQuantity = parseInt(quantitySpan.textContent) + 1; // Incrementa la cantidad en el carrito
-            quantitySpan.textContent = newQuantity; // Actualiza la cantidad en la interfaz
+            const newQuantity = parseInt(quantitySpan.textContent) + 1; 
+            quantitySpan.textContent = newQuantity; 
         } else {
-            // Solo se añade al carrito si hay stock
             addToCart(product);
-            document.getElementById('scan-code').value = ''; // Limpia el campo de escaneo
-            updateTotalPrice(); // Actualiza el total
-            checkStock(product); // Verifica el stock y muestra alertas
+            document.getElementById('scan-code').value = ''; 
+            updateTotalPrice(); 
+            checkStock(product);
         }
     } else {
         alert('Producto no encontrado');
@@ -389,21 +383,20 @@ function checkout() {
         return; // Detener si hay problemas de stock
     }
 
-   // Actualizar el inventario
 Object.entries(quantitiesToDeduct).forEach(([code, quantity]) => {
     const product = products.find(p => p.code === code);
     if (product) {
-        product.quantity -= quantity; // Restar la cantidad vendida
-        product.sold = (product.sold || 0) + quantity; // Registrar la cantidad vendida
+        product.quantity -= quantity;
+        product.sold = (product.sold || 0) + quantity; 
     }
 });
 
-    saveProducts(products); // Guarda el inventario actualizado
+    saveProducts(products); 
     document.getElementById('cart').innerHTML = ''; // Limpiar el carrito
     document.getElementById('total-price').textContent = '0.00'; // Resetear total
     alert('Compra finalizada. El inventario ha sido actualizado.');
 
-    displayProducts(); // Actualiza la vista
+    displayProducts(); 
 }
 
 function consultarTotalVendido() {
