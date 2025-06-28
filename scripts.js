@@ -840,6 +840,29 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem('currentUser');   // borra la sesión
   window.location.href = 'login_empleado.html';
 });
+/* ════════════════════════════════════════════════════════
+   1) Abrir visor con HISTORIAL (nuevo)
+═════════════════════════════════════════════════════════ */
+function abrirVisorHistorialCliente(idCliente) {
+  // Seleccionamos al cliente
+  localStorage.setItem('clienteSeleccionado', idCliente);
+
+  // 🔑 Flag para que el visor muestre historial
+  localStorage.setItem('mostrarHistorial', 'true');
+
+  // Abrimos el visor en una pestaña nueva
+  window.open('cliente.html', '_blank');
+}
+
+/* ════════════════════════════════════════════════════════
+   2) Abrir visor SOLO carrito en vivo (sin historial)
+      (por si lo usás desde otro lado, ejemplo enviarCarritoAlCliente)
+═════════════════════════════════════════════════════════ */
+function abrirVisorCarrito() {
+  // Podés limpiar o dejar el último cliente seleccionado
+  localStorage.removeItem('mostrarHistorial'); // ← sin flag = sin historial
+  window.open('cliente.html', '_blank');
+}
  
 function soloAdmin(fn) {
   return (...args) => {
