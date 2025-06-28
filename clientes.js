@@ -49,7 +49,7 @@ function abrirDetalleCliente(id) {
           <td>${hora}</td>
           <td>${p.detalle}</td>
           <td>${p.cantidad}</td>
-          <td>$${(p.precio * p.cantidad).toFixed(2)}</td>
+          <td>$${p.precio.toFixed(2)}</td>
         `;
         tbody.appendChild(tr);
       });
