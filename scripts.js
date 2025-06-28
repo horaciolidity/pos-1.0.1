@@ -692,6 +692,15 @@ function finalizeSale(method) {
   let   hasStock = false;
 
   /*-------------------------------------------------------
+  3) Datos de la venta
+-------------------------------------------------------*/
+const novedades      = prompt("¿Desea agregar alguna novedad sobre esta venta? (opcional)") || "";
+const fechaObj       = new Date();
+const timestamp      = fechaObj.toLocaleString();  // legible
+const timestampIso   = fechaObj.toISOString();     // ISO → arqueo mensual
+const timestampMs    = fechaObj.getTime();         // opcional, para comparar rápido
+
+  /*-------------------------------------------------------
     2) Recorremos el carrito y actualizamos inventario
   -------------------------------------------------------*/
   cartItems.forEach(item => {
@@ -735,14 +744,7 @@ if (clienteSeleccionado) {
 
   if (hasStock) return;   // aborta si hay problemas de stock
 
-  /*-------------------------------------------------------
-    3) Datos de la venta
-  -------------------------------------------------------*/
-  const novedades      = prompt("¿Desea agregar alguna novedad sobre esta venta? (opcional)") || "";
-  const fechaObj       = new Date();
-  const timestamp      = fechaObj.toLocaleString();  // legible
-  const timestampIso   = fechaObj.toISOString();     // ISO → arqueo mensual
-  const timestampMs    = fechaObj.getTime();         // opcional, para comparar rápido
+  
 
   const venta = { cart, paymentMethod: method, timestamp, timestampIso, timestampMs, novedades };
 
