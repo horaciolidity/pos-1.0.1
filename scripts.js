@@ -446,50 +446,81 @@ Object.entries(quantitiesToDeduct).forEach(([code, quantity]) => {
 }
 
 function consultarTotalVendido() {
-    const totalVendido        = localStorage.getItem('totalVendido') || '0.00';
-    const ventasModal         = document.getElementById('ventas-modal');
-    const ventasDetalle       = document.getElementById('ventas-detalle');
-    const totalVendidoModal   = document.getElementById('total-vendido-modal');
+  const ventasModal       = document.getElementById('ventas-modal');
+  const ventasDetalle     = document.getElementById('ventas-detalle');
+  const totalVendidoModal = document.getElementById('total-vendido-modal');
+  const ventas            = getVentas(); // historial real
+  const productos         = getProducts();
+  const clientes          = JSON.parse(localStorage.getItem('clientes')) || [];
 
-    ventasDetalle.innerHTML = '';
+  let totalReal = 0;
+  let ventasHtml = '';
 
-    const products = getProducts();
-    let productosHtml = '';
-    products.forEach(p => {
-        if (p.sold > 0) {
-            productosHtml += `
-                <li>${p.name} - Precio: $${p.price} - Cantidad vendida: ${p.sold}</li>
-            `;
-        }
+  if (ventas.length > 0) {
+    ventasHtml += `<h3>Detalle de ventas realizadas</h3>`;
+    ventas.forEach((venta, i) => {
+      const fecha = venta.timestamp || venta.date || venta.timestampIso || venta.dateISO || '---';
+      const cliente = clientes.find(c => c.id === venta.clientId);
+      const nombreCliente = cliente ? cliente.name : '—';
+
+      const items = (venta.cart || venta.products || []).map(p => {
+        const qty = p.qty || p.quantity;
+        return `<li>${qty}× ${p.name}</li>`;
+      }).join('');
+
+      const totalVenta = venta.total || (venta.cart || []).reduce((s, p) => s + p.price * p.quantity, 0);
+      totalReal += totalVenta;
+
+      ventasHtml += `
+        <li>
+          <strong>${fecha}</strong> – $${totalVenta.toFixed(2)} – Cliente: ${nombreCliente}
+          <ul>${items}</ul>
+        </li>`;
     });
-    if (!productosHtml) productosHtml = '<li>No hay productos vendidos aún.</li>';
+  } else {
+    ventasHtml = '<p>No hay ventas registradas.</p>';
+  }
 
-    const clientes  = JSON.parse(localStorage.getItem('clientes')) || [];
-    const deudores  = clientes.filter(c => parseFloat(c.saldo || 0) > 0);
-
-    let deudoresHtml = '';
-    let totalDeuda   = 0;
-
-    if (deudores.length > 0) {
-        deudoresHtml += '<hr><h3>Clientes con deuda</h3>';
-        deudores.forEach((c, i) => {
-            const deuda = parseFloat(c.saldo).toFixed(2);
-            totalDeuda += parseFloat(c.saldo);
-            deudoresHtml += `<li>${i + 1}. ${c.nombre} — Tel: ${c.telefono || '---'} — Debe $${deuda}</li>`;
-        });
-        deudoresHtml += `<p><strong>Total deuda acumulada: $${totalDeuda.toFixed(2)}</strong></p>`;
-    } else {
-        deudoresHtml += '<p>No hay clientes con deuda.</p>';
+  // Productos vendidos
+  let productosHtml = '';
+  productos.forEach(p => {
+    if (p.sold > 0) {
+      productosHtml += `<li>${p.name} - Precio: $${p.price} - Cantidad vendida: ${p.sold}</li>`;
     }
+  });
+  if (!productosHtml) productosHtml = '<li>No hay productos vendidos aún.</li>';
 
-    ventasDetalle.innerHTML  = productosHtml + deudoresHtml;
-    totalVendidoModal.textContent = totalVendido;
-    ventasModal.style.display = 'block';
+  // Clientes con deuda
+  const deudores = clientes.filter(c => parseFloat(c.saldo || 0) > 0);
+  let deudoresHtml = '';
+  let totalDeuda = 0;
+
+  if (deudores.length > 0) {
+    deudoresHtml += '<hr><h3>Clientes con deuda</h3>';
+    deudores.forEach((c, i) => {
+      const deuda = parseFloat(c.saldo).toFixed(2);
+      totalDeuda += parseFloat(c.saldo);
+      deudoresHtml += `<li>${i + 1}. ${c.name || c.nombre} — Tel: ${c.telefono || '---'} — Debe $${deuda}</li>`;
+    });
+    deudoresHtml += `<p><strong>Total deuda acumulada: $${totalDeuda.toFixed(2)}</strong></p>`;
+  } else {
+    deudoresHtml += '<p>No hay clientes con deuda.</p>';
+  }
+
+  ventasDetalle.innerHTML = `
+    ${ventasHtml}
+    <hr><h3>Resumen por producto</h3>
+    <ul>${productosHtml}</ul>
+    ${deudoresHtml}
+  `;
+
+  totalVendidoModal.textContent = '$' + totalReal.toFixed(2);
+  ventasModal.style.display = 'block';
 }
 
+// Cierre del modal
 document.querySelector('.close').onclick = () =>
   document.getElementById('ventas-modal').style.display = 'none';
-
 
 // Descargar detalle de ventas
 function downloadVentas() {
