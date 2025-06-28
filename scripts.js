@@ -923,6 +923,8 @@ function formatearFecha(iso){
 }
 
 function tablaHistorial(hist) {
+
+  // Si no es array o está vacío
   if (!Array.isArray(hist) || hist.length === 0) {
     return '<em>Sin ventas registradas</em>';
   }
@@ -930,13 +932,25 @@ function tablaHistorial(hist) {
   return `<table class="subtabla">
     <thead><tr><th>Fecha</th><th>Productos</th><th>Total</th></tr></thead>
     <tbody>${
-      hist.map(h => `<tr>
-        <td>${formatearFecha(h.dateISO)}</td>
-        <td><ul>${h.items.map(i => `<li>${i.quantity}× ${i.name}</li>`).join('')}</ul></td>
-        <td>$${h.total.toFixed(2)}</td>
-      </tr>`).join('')
-    }</tbody></table>`;
+      hist.map(h => {
+        // ⬇⬇  Fallbacks defensivos  ⬇⬇
+        const fecha  = h.dateISO || h.fecha || h.timestampIso || h.timestamp || '---';
+        const items  = Array.isArray(h.items) ? h.items : [];
+        const lista  = items.length
+          ? items.map(i => `<li>${(i.quantity || i.qty || 0)}× ${i.name || i.product || '—'}</li>`).join('')
+          : '<li>—</li>';
+        const total  = (h.total !== undefined) ? h.total : 0;
+
+        return `<tr>
+          <td>${formatearFecha(fecha)}</td>
+          <td><ul>${lista}</ul></td>
+          <td>$${(+total).toFixed(2)}</td>
+        </tr>`;
+      }).join('')
+    }</tbody>
+  </table>`;
 }
+
 
 
 function renderClientes(){
