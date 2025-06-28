@@ -1,6 +1,4 @@
-/* ────────────────────────────────
-   SESIÓN Y UTILIDAD DE PERMISOS
-───────────────────────────────── */
+
 const session = JSON.parse(localStorage.getItem('currentUser')) || { role: 'empleado' };
 const isAdmin = session.role === 'admin';
 
