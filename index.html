@@ -178,12 +178,62 @@
     <!-- Tabla listado -->
     <table style="width:100%; margin-top:15px; text-align:left;">
       <thead>
-        <tr><th>Nombre</th><th>Teléfono</th><th>Deuda</th><th>Acciones</th></tr>
+        <tr>
+          <th>Nombre</th>
+          <th>Teléfono</th>
+          <th>Deuda</th>
+          <th>Acciones</th>
+          <th>Detalle</th>
+        </tr>
       </thead>
-      <tbody id="tabla-clientes"></tbody>
+      <tbody id="tabla-clientes">
+        <!--
+          Cada fila la produces dinámicamente desde tu script.
+          Ejemplo de celda “Detalle” que dispara el modal:
+          <td>
+            <button class="btn-detalle" onclick="abrirDetalleCliente('ID_DEL_CLIENTE')">
+              Ver historial
+            </button>
+          </td>
+        -->
+      </tbody>
     </table>
   </div>
 </div>
+
+<!-- ──────────────── MODAL DETALLE HISTORIAL DE VENTAS ──────────────── -->
+<div id="modal-detalle-cliente" class="modal" style="display:none;">
+  <div class="modal-content" style="max-width:700px;">
+    <span class="close" onclick="cerrarModalDetalleCliente()">&times;</span>
+    <!-- El nombre del cliente se inserta dinámicamente -->
+    <h2 id="detalle-nombre-cliente">Historial de ventas</h2>
+
+    <table style="width:100%; text-align:left;">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Total $</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-detalle-cliente">
+        <!--
+          Aquí tu script inyectará filas así:
+          <tr>
+            <td>28/06/2025</td>
+            <td>17:42</td>
+            <td>Producto X</td>
+            <td>3</td>
+            <td>4500</td>
+          </tr>
+        -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
 <!-- ───────────────────────────────────────────────────────────────────── -->
 
 
