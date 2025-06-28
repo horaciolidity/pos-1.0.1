@@ -375,12 +375,12 @@ function checkout() {
                 hasStockIssue = true; 
                 return; 
             }
-            quantitiesToDeduct[productCode] = quantity; // Almacena la cantidad a deducir
+            quantitiesToDeduct[productCode] = quantity; 
         }
     });
 
     if (hasStockIssue) {
-        return; // Detener si hay problemas de stock
+        return; 
     }
 
 Object.entries(quantitiesToDeduct).forEach(([code, quantity]) => {
@@ -392,8 +392,8 @@ Object.entries(quantitiesToDeduct).forEach(([code, quantity]) => {
 });
 
     saveProducts(products); 
-    document.getElementById('cart').innerHTML = ''; // Limpiar el carrito
-    document.getElementById('total-price').textContent = '0.00'; // Resetear total
+    document.getElementById('cart').innerHTML = ''; 
+    document.getElementById('total-price').textContent = '0.00'; 
     alert('Compra finalizada. El inventario ha sido actualizado.');
 
     displayProducts(); 
@@ -445,21 +445,17 @@ document.querySelector('.close').onclick = () =>
   document.getElementById('ventas-modal').style.display = 'none';
 
 
-// Descargar detalle de ventas
 function downloadVentas() {
     const totalVendido = localStorage.getItem('totalVendido') || '0.00';
-    const products = getProducts(); // Asegúrate de que esta función trae correctamente los productos
+    const products = getProducts(); 
     let detalle = `Total Vendido: $${totalVendido}\n\nProductos Vendidos:\n`;
 
-    // Iterar sobre los productos vendidos
     products.forEach(product => {
-        // Solo incluir los productos que se vendieron
         if (product.sold && product.sold > 0) {
             detalle += `${product.name} - Precio: $${product.price} - Cantidad vendida: ${product.sold}\n`;
         }
     });
 
-    // Generar archivo de texto
     const blob = new Blob([detalle], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -470,7 +466,6 @@ function downloadVentas() {
     document.body.removeChild(a);
 }
 
-// Detectar clic fuera del modal para cerrar
 window.onclick = function(event) {
     const ventasModal = document.getElementById('ventas-modal');
     if (event.target === ventasModal) {
@@ -527,18 +522,18 @@ function parseProducts(contents) {
     const lines = contents.split('\n');
     const products = lines.map(line => {
         const parts = line.split(',');
-        if (parts.length !== 4) { // Ahora esperamos 4 partes: código, nombre, precio y cantidad
+        if (parts.length !== 4) { 
             console.error('Formato de producto inválido:', line);
-            return null; // Omitir líneas mal formateadas
+            return null;
         }
         const [code, name, price, quantity] = parts;
         return {
             code: code.trim(),
             name: name.trim(),
             price: parseFloat(price.trim()),
-            quantity: parseInt(quantity.trim()) // Procesar la cantidad
+            quantity: parseInt(quantity.trim())
         };
-    }).filter(product => product !== null); // Filtrar productos nulos
+    }).filter(product => product !== null);
     return products;
 }
 
@@ -584,7 +579,6 @@ function getOpeningCash() {
     return parseFloat(localStorage.getItem('openingCash')) || 0;
 }
 
-// Guardar una venta en LocalStorage
 function saveSale(cart, paymentMethod) {
     const sales = JSON.parse(localStorage.getItem('sales')) || [];
     const timestamp = new Date().toLocaleString();
@@ -593,9 +587,7 @@ function saveSale(cart, paymentMethod) {
 }
 
 function finalizeSale(method) {
-  /*-------------------------------------------------------
-    1) Validaciones básicas
-  -------------------------------------------------------*/
+  
   const cartItems = document.querySelectorAll('#cart li');
   if (cartItems.length === 0) {
     alert('El carrito está vacío');
@@ -606,9 +598,7 @@ function finalizeSale(method) {
   const cart     = [];
   let   hasStock = false;
 
-  /*-------------------------------------------------------
-    2) Recorremos el carrito y actualizamos inventario
-  -------------------------------------------------------*/
+  
   cartItems.forEach(item => {
     const code       = item.dataset.code;
     const quantity   = parseFloat(item.querySelector('.quantity').textContent);
@@ -623,46 +613,35 @@ function finalizeSale(method) {
       hasStock = true;
     }
 
-    /* Armamos detalle para registrar la venta */
     cart.push({
       code,
       name: product.name,
-      price: totalPrice / quantity,   // precio unitario
+      price: totalPrice / quantity,  
       quantity,
       cost: product.cost || 0
     });
   });
 
-  if (hasStock) return;   // aborta si hay problemas de stock
-
-  /*-------------------------------------------------------
-    3) Datos de la venta
-  -------------------------------------------------------*/
+  if (hasStock) return;   
   const novedades      = prompt("¿Desea agregar alguna novedad sobre esta venta? (opcional)") || "";
   const fechaObj       = new Date();
-  const timestamp      = fechaObj.toLocaleString();  // legible
-  const timestampIso   = fechaObj.toISOString();     // ISO → arqueo mensual
-  const timestampMs    = fechaObj.getTime();         // opcional, para comparar rápido
+  const timestamp      = fechaObj.toLocaleString();  
+  const timestampIso   = fechaObj.toISOString();     
+  const timestampMs    = fechaObj.getTime();         
 
   const venta = { cart, paymentMethod: method, timestamp, timestampIso, timestampMs, novedades };
 
-  /*-------------------------------------------------------
-    4) Guardamos en localStorage
-  -------------------------------------------------------*/
+ 
   const sales = JSON.parse(localStorage.getItem('sales')) || [];
   sales.push(venta);
   localStorage.setItem('sales', JSON.stringify(sales));
 
-  /*-------------------------------------------------------
-    5) Actualizamos totalVendido (independiente del método)
-  -------------------------------------------------------*/
+  
   const totalVenta   = cart.reduce((acc, p) => acc + (p.price * p.quantity), 0);
   const totalVendido = parseFloat(localStorage.getItem('totalVendido')) || 0;
   localStorage.setItem('totalVendido', (totalVendido + totalVenta).toFixed(2));
 
-  /*-------------------------------------------------------
-    6) Persistimos inventario y limpiamos interfaz
-  -------------------------------------------------------*/
+
   saveProducts(products);
   document.getElementById('cart').innerHTML = '';
   document.getElementById('total-price').textContent = '0.00';
@@ -671,20 +650,16 @@ function finalizeSale(method) {
   displayProducts();
   updateTotalPrice();
 
-  /*-------------------------------------------------------
-    7) Notificación Broadcast (optional)
-  -------------------------------------------------------*/
+ 
   const canal = new BroadcastChannel('pos_channel');
   canal.postMessage({ tipo: 'despedida' });
 }
 
 function showSalesSummary() {
-  /*-------------------------------------------------------
-    1) Traemos ventas guardadas
-  -------------------------------------------------------*/
+  
   const sales = JSON.parse(localStorage.getItem('sales')) || [];
 
-  /* Variables acumuladoras */
+  
   let summary        = '';
   let totalCash      = 0;
   let totalTransfer  = 0;
@@ -692,16 +667,13 @@ function showSalesSummary() {
   let totalCostos    = 0;
   let totalGanancia  = 0;
 
-  /*-------------------------------------------------------
-    2) Recorremos todas las ventas
-  -------------------------------------------------------*/
+ 
   sales.forEach((sale, index) => {
     summary += `🧾 Venta #${index + 1} - ${sale.timestamp} - Método: ${sale.paymentMethod}\n`;
 
     let ventaSubtotal = 0;
     let ventaCosto    = 0;
 
-    /* Detalle de productos */
     sale.cart.forEach(p => {
       const q        = parseFloat(p.quantity);
       const priceU   = parseFloat(p.price);
@@ -716,12 +688,10 @@ function showSalesSummary() {
       summary += `  🛒 ${q} x ${p.name} | Precio u.: $${priceU.toFixed(2)} | Costo u.: $${costU.toFixed(2)} | Subtotal: $${subTotal.toFixed(2)} | Ganancia: $${profit.toFixed(2)}\n`;
     });
 
-    /* Ganancia por venta */
     const gananciaVenta = ventaSubtotal - ventaCosto;
     totalCostos   += ventaCosto;
     totalGanancia += gananciaVenta;
 
-    /* Resumen por venta */
     summary += `  💲 Total venta: $${ventaSubtotal.toFixed(2)}\n`;
     summary += `  📦 Costo total: $${ventaCosto.toFixed(2)}\n`;
     summary += `  📈 Ganancia: $${gananciaVenta.toFixed(2)}\n`;
@@ -731,16 +701,13 @@ function showSalesSummary() {
     }
     summary += '\n';
 
-    /* Clasificamos por método de pago */
     const method = sale.paymentMethod.toLowerCase();
     if (method.includes('efectivo'))        totalCash     += ventaSubtotal;
     else if (method.includes('transfer'))   totalTransfer += ventaSubtotal;
     else if (method.includes('cuenta'))     totalCliente  += ventaSubtotal;
   });
 
-  /*-------------------------------------------------------
-    3) Totales finales
-  -------------------------------------------------------*/
+
   const totalFacturado = totalCash + totalTransfer + totalCliente;
 
   summary += `🔓 Apertura de caja: $${getOpeningCash().toFixed(2)}\n`;
@@ -751,9 +718,7 @@ function showSalesSummary() {
   summary += `📈 Ganancia total: $${totalGanancia.toFixed(2)}\n`;
   summary += `💵 Total facturado: $${totalFacturado.toFixed(2)}`;
 
-  /*-------------------------------------------------------
-    4) Mostramos en el textarea
-  -------------------------------------------------------*/
+  
   document.getElementById('sales-summary').value = summary;
 }
 
@@ -763,7 +728,6 @@ function showSalesSummary() {
 function payWithTransfer() {
     finalizeSale('Transferido');
 }
-// Descargar el resumen como archivo de texto
 function downloadSummary() {
     const text = document.getElementById('sales-summary').value;
     const blob = new Blob([text], { type: 'text/plain' });
@@ -787,9 +751,8 @@ function saveVentas(ventas) {
 
 
 
-// Función para verificar el stock y mostrar alertas
 function checkStock(product) {
-    if (product.quantity < 5) { // Por ejemplo, menos de 5 unidades
+    if (product.quantity < 5) { 
         alert(`Quedan solo ${product.quantity} unidades de ${product.name}.`);
     }
 }
@@ -821,7 +784,7 @@ function resetDay() {
 
 
 document.getElementById('logoutBtn').addEventListener('click', () => {
-  localStorage.removeItem('currentUser');   // borra la sesión
+  localStorage.removeItem('currentUser');   
   window.location.href = 'login_empleado.html';
 });
 
@@ -848,7 +811,6 @@ function soloAdmin(fn) {
   };
 }
 
-/* Re-asigná tus funciones críticas */
 addProduct            = soloAdmin(addProduct);
 deleteProduct         = soloAdmin(deleteProduct);
 editProduct           = soloAdmin(editProduct);
