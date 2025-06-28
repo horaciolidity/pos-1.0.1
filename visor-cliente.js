@@ -1,17 +1,9 @@
-/* visor-cliente.js  —  reemplazo total
-   Muestra carrito en vivo + historial del cliente SIN botón
-------------------------------------------------------------- */
-
-/* Canal de comunicación con la caja */
 const canal = new BroadcastChannel('pos_channel');
-
-/* Elementos de la pantalla */
 const lista  = document.getElementById('lista');
 const total  = document.getElementById('total');
+const mostrarHistorial = localStorage.getItem('mostrarHistorial') === 'true';
 
-/* -----------------------------------------------------------
-   1) Render del carrito que llega desde la caja
------------------------------------------------------------ */
+/* 🟢 Render del carrito */
 function renderCarrito(productos = []) {
   lista.innerHTML = '';
   let totalFinal = 0;
@@ -19,8 +11,7 @@ function renderCarrito(productos = []) {
   productos.forEach(p => {
     const subtotal = p.precioUnitario * p.cantidad;
     const li = document.createElement('li');
-    li.textContent =
-      `${p.cantidad} x ${p.nombre} ($${p.precioUnitario.toFixed(2)}) = $${subtotal.toFixed(2)}`;
+    li.textContent = `${p.cantidad} x ${p.nombre} ($${p.precioUnitario.toFixed(2)}) = $${subtotal.toFixed(2)}`;
     lista.appendChild(li);
     totalFinal += subtotal;
   });
@@ -28,36 +19,35 @@ function renderCarrito(productos = []) {
   total.textContent = totalFinal.toFixed(2);
 }
 
-/* -----------------------------------------------------------
-   2) Historial del cliente activo (se muestra siempre)
------------------------------------------------------------ */
+/* 📋 Historial (solo si está activado el flag) */
 function cargarHistorialCliente() {
-  const id        = localStorage.getItem('clienteSeleccionado');
-  const clientes  = JSON.parse(localStorage.getItem('clientes')) || [];
-  const c         = clientes.find(cl => cl.id === id);
+  if (!mostrarHistorial) {
+    document.getElementById('historial').style.display = 'none';
+    return;
+  }
 
-  const divHist   = document.getElementById('historial');
-  const tbody     = document.getElementById('tablaHistorial');
+  const id = localStorage.getItem('clienteSeleccionado');
+  const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+  const c = clientes.find(cl => cl.id === id);
 
-  /* Si no hay cliente seleccionado, ocultamos la sección */
+  const divHist = document.getElementById('historial');
+  const tbody = document.getElementById('tablaHistorial');
+
   if (!c) {
     divHist.style.display = 'none';
     return;
   }
+
   divHist.style.display = 'block';
 
-  /* Cabeceras */
   document.getElementById('tituloHistorial').textContent =
     `Historial de ventas – ${c.nombre}`;
   document.getElementById('deudaHistorial').textContent =
     `💰 Total adeudado: $${c.saldo.toFixed(2)}`;
 
-  /* Tabla */
   tbody.innerHTML = '';
-
   if (!c.historial || c.historial.length === 0) {
-    tbody.innerHTML =
-      '<tr><td colspan="5" style="text-align:center;">Sin ventas registradas</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Sin ventas registradas</td></tr>`;
     return;
   }
 
@@ -70,20 +60,17 @@ function cargarHistorialCliente() {
         <td>${hora}</td>
         <td>${p.detalle}</td>
         <td>${p.cantidad}</td>
-        <td>$${p.precio.toFixed(2)}</td>`;
+        <td>$${p.precio.toFixed(2)}</td>
+      `;
       tbody.appendChild(tr);
     });
   });
 }
 
-/* -----------------------------------------------------------
-   3) Inicializar historial al cargar la página
------------------------------------------------------------ */
+/* Inicial: cargar historial solo si está permitido */
 cargarHistorialCliente();
 
-/* -----------------------------------------------------------
-   4) Escuchar mensajes de la caja
------------------------------------------------------------ */
+/* Evento desde caja */
 canal.onmessage = e => {
   const data = e.data;
 
@@ -99,12 +86,11 @@ canal.onmessage = e => {
     renderCarrito([]);
     const msg = document.createElement('li');
     msg.textContent = 'GRACIAS Y VUELVA PRONTO';
-    msg.style.cssText =
-      'text-align:center;font-size:40px;color:#ffff00;text-shadow:0 0 10px #ff0';
+    msg.style.cssText = 'text-align:center;font-size:40px;color:#ffff00;text-shadow:0 0 10px #ff0';
     lista.appendChild(msg);
     setTimeout(() => renderCarrito([]), 10000);
   }
 
-  /* Tras cada evento, refrescamos historial en tiempo real */
-  cargarHistorialCliente();
+  /* Cada vez que llega algo → si corresponde, actualizamos historial */
+  if (mostrarHistorial) cargarHistorialCliente();
 };
