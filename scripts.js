@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     displayProducts();
     updateTotalPrice();
+    renderClientes();
+    refrescarListaClientes();
 
     const input = document.getElementById('opening-cash');
     const yaInicioCaja = localStorage.getItem('openingCashSet') === 'true';
@@ -678,31 +680,21 @@ function saveSale(cart, paymentMethod) {
 }
 
 function finalizeSale(method) {
-  /*-------------------------------------------------------
-    1) Validaciones básicas
-  -------------------------------------------------------*/
+  /* 1) Validaciones básicas ----------------------------------------- */
   const cartItems = document.querySelectorAll('#cart li');
-  if (cartItems.length === 0) {
-    alert('El carrito está vacío');
-    return;
-  }
+  if (cartItems.length === 0) { alert('El carrito está vacío'); return; }
 
   const products = getProducts();
   const cart     = [];
   let   hasStock = false;
 
-  /*-------------------------------------------------------
-  3) Datos de la venta
--------------------------------------------------------*/
-const novedades      = prompt("¿Desea agregar alguna novedad sobre esta venta? (opcional)") || "";
-const fechaObj       = new Date();
-const timestamp      = fechaObj.toLocaleString();  // legible
-const timestampIso   = fechaObj.toISOString();     // ISO → arqueo mensual
-const timestampMs    = fechaObj.getTime();         // opcional, para comparar rápido
+  /* 2) Datos de FECHA ya al inicio ---------------------------------- */
+  const fechaObj     = new Date();
+  const timestamp    = fechaObj.toLocaleString();   // legible
+  const timestampIso = fechaObj.toISOString();      // ISO
+  const timestampMs  = fechaObj.getTime();
 
-  /*-------------------------------------------------------
-    2) Recorremos el carrito y actualizamos inventario
-  -------------------------------------------------------*/
+  /* 3) Recorremos carrito y actualizamos inventario ----------------- */
   cartItems.forEach(item => {
     const code       = item.dataset.code;
     const quantity   = parseFloat(item.querySelector('.quantity').textContent);
@@ -717,67 +709,66 @@ const timestampMs    = fechaObj.getTime();         // opcional, para comparar r�
       hasStock = true;
     }
 
-    /* Armamos detalle para registrar la venta */
     cart.push({
       code,
-      name: product.name,
-      price: totalPrice / quantity,   // precio unitario
+      name     : product.name,
+      price    : totalPrice / quantity,  // unitario
       quantity,
-      cost: product.cost || 0
+      cost     : product.cost || 0
     });
   });
-/* REGISTRA EN HISTORIAL DEL CLIENTE (si corresponde) */
-if (clienteSeleccionado) {
-  const clientes = getClientes();
-  const cli      = clientes.find(c => c.id === clienteSeleccionado.id);
-  const totalVta = cart.reduce((acc, p) => acc + p.price * p.quantity, 0);
-
-  cli.saldo     = (+cli.saldo || 0) + totalVta;
-  cli.historial = cli.historial || [];
-  cli.historial.push({
-    dateISO : timestampIso,
-    items   : cart,
-    total   : totalVta
-  });
-  saveClientes(clientes);
-}
-
   if (hasStock) return;   // aborta si hay problemas de stock
 
-  
+  /* 4) Totales y ganancia ------------------------------------------- */
+  const totalVenta = cart.reduce((s,p)=> s + p.price * p.quantity, 0);
+  const costoVenta = cart.reduce((s,p)=> s + p.cost  * p.quantity, 0);
+  const ganancia   = totalVenta - costoVenta;
 
-  const venta = { cart, paymentMethod: method, timestamp, timestampIso, timestampMs, novedades };
+  /* 5) Construimos la venta ----------------------------------------- */
+  const novedades = prompt("¿Desea agregar alguna novedad sobre esta venta? (opcional)") || "";
+  const venta = {
+    id        : timestampMs.toString(),
+    timestamp,
+    timestampIso,
+    timestampMs,
+    cart,
+    total     : totalVenta,
+    profit    : ganancia,
+    clientId  : clienteSeleccionado?.id || null,
+    paymentMethod : method,
+    novedades
+  };
 
-  /*-------------------------------------------------------
-    4) Guardamos en localStorage
-  -------------------------------------------------------*/
-  const sales = JSON.parse(localStorage.getItem('sales')) || [];
-  sales.push(venta);
-  localStorage.setItem('sales', JSON.stringify(sales));
+  /* 6) Guardamos en localStorage.sales ------------------------------ */
+  const ventas = getVentas();
+  ventas.push(venta);
+  saveVentas(ventas);
 
-  /*-------------------------------------------------------
-    5) Actualizamos totalVendido (independiente del método)
-  -------------------------------------------------------*/
-  const totalVenta   = cart.reduce((acc, p) => acc + (p.price * p.quantity), 0);
-  const totalVendido = parseFloat(localStorage.getItem('totalVendido')) || 0;
-  localStorage.setItem('totalVendido', (totalVendido + totalVenta).toFixed(2));
+  /* 7) Historial del cliente ---------------------------------------- */
+  if (clienteSeleccionado) {
+    const clientes = getClientes();
+    const cli      = clientes.find(c => c.id === clienteSeleccionado.id);
+    cli.saldo     = (+cli.saldo || 0) + totalVenta;
+    cli.historial = cli.historial || [];
+    cli.historial.push({
+      dateISO : timestampIso,
+      items   : cart,
+      total   : totalVenta
+    });
+    saveClientes(clientes);
+  }
 
-  /*-------------------------------------------------------
-    6) Persistimos inventario y limpiamos interfaz
-  -------------------------------------------------------*/
+  /* 8) Persistimos inventario y limpiamos interfaz ------------------ */
   saveProducts(products);
   document.getElementById('cart').innerHTML = '';
   document.getElementById('total-price').textContent = '0.00';
+  clienteSeleccionado = null;
   alert(`Venta registrada con pago: ${method}`);
 
   displayProducts();
   updateTotalPrice();
-
-  /*-------------------------------------------------------
-    7) Notificación Broadcast (optional)
-  -------------------------------------------------------*/
   const canal = new BroadcastChannel('pos_channel');
-  canal.postMessage({ tipo: 'despedida' });
+  canal.postMessage({ tipo: 'venta' });
 }
 
 function showSalesSummary() {
