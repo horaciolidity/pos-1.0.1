@@ -922,17 +922,22 @@ function formatearFecha(iso){
   return d.toLocaleDateString()+' '+d.toLocaleTimeString();
 }
 
-function tablaHistorial(hist){
+function tablaHistorial(hist) {
+  if (!Array.isArray(hist) || hist.length === 0) {
+    return '<em>Sin ventas registradas</em>';
+  }
+
   return `<table class="subtabla">
     <thead><tr><th>Fecha</th><th>Productos</th><th>Total</th></tr></thead>
     <tbody>${
-      hist.map(h=>`<tr>
+      hist.map(h => `<tr>
         <td>${formatearFecha(h.dateISO)}</td>
-        <td><ul>${h.items.map(i=>`<li>${i.quantity}× ${i.name}</li>`).join('')}</ul></td>
+        <td><ul>${h.items.map(i => `<li>${i.quantity}× ${i.name}</li>`).join('')}</ul></td>
         <td>$${h.total.toFixed(2)}</td>
       </tr>`).join('')
     }</tbody></table>`;
 }
+
 
 function renderClientes(){
   const tbody=document.getElementById('clientes-tbody');
