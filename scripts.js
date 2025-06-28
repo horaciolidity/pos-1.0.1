@@ -409,35 +409,49 @@ Object.entries(quantitiesToDeduct).forEach(([code, quantity]) => {
 }
 
 function consultarTotalVendido() {
-    const totalVendido = localStorage.getItem('totalVendido');
-    const ventasModal = document.getElementById('ventas-modal');
-    const ventasDetalle = document.getElementById('ventas-detalle');
-    const totalVendidoModal = document.getElementById('total-vendido-modal');
+    const totalVendido        = localStorage.getItem('totalVendido') || '0.00';
+    const ventasModal         = document.getElementById('ventas-modal');
+    const ventasDetalle       = document.getElementById('ventas-detalle');
+    const totalVendidoModal   = document.getElementById('total-vendido-modal');
 
-    ventasDetalle.innerHTML = ''; // Limpiar el detalle de ventas
+    ventasDetalle.innerHTML = '';
+
     const products = getProducts();
-
-    let productosVendidos = '';
-    products.forEach(product => {
-       if (product.sold > 0) { 
-    productosVendidos += `
-        <li>${product.name} - Precio: $${product.price} - Cantidad vendida: ${product.sold}</li>
-    `;
-}
-
+    let productosHtml = '';
+    products.forEach(p => {
+        if (p.sold > 0) {
+            productosHtml += `
+                <li>${p.name} - Precio: $${p.price} - Cantidad vendida: ${p.sold}</li>
+            `;
+        }
     });
+    if (!productosHtml) productosHtml = '<li>No hay productos vendidos aún.</li>';
 
-    ventasDetalle.innerHTML = productosVendidos || '<li>No hay productos vendidos aún.</li>';
-    totalVendidoModal.textContent = totalVendido ? totalVendido : '0.00';
-    
-    ventasModal.style.display = 'block'; // Mostrar el modal
+    const clientes  = JSON.parse(localStorage.getItem('clientes')) || [];
+    const deudores  = clientes.filter(c => parseFloat(c.saldo || 0) > 0);
+
+    let deudoresHtml = '';
+    let totalDeuda   = 0;
+
+    if (deudores.length > 0) {
+        deudoresHtml += '<hr><h3>Clientes con deuda</h3>';
+        deudores.forEach((c, i) => {
+            const deuda = parseFloat(c.saldo).toFixed(2);
+            totalDeuda += parseFloat(c.saldo);
+            deudoresHtml += `<li>${i + 1}. ${c.nombre} — Tel: ${c.telefono || '---'} — Debe $${deuda}</li>`;
+        });
+        deudoresHtml += `<p><strong>Total deuda acumulada: $${totalDeuda.toFixed(2)}</strong></p>`;
+    } else {
+        deudoresHtml += '<p>No hay clientes con deuda.</p>';
+    }
+
+    ventasDetalle.innerHTML  = productosHtml + deudoresHtml;
+    totalVendidoModal.textContent = totalVendido;
+    ventasModal.style.display = 'block';
 }
 
-// Cerrar el modal
-const closeModal = document.querySelector('.close');
-closeModal.onclick = function() {
-    document.getElementById('ventas-modal').style.display = 'none';
-};
+document.querySelector('.close').onclick = () =>
+  document.getElementById('ventas-modal').style.display = 'none';
 
 
 // Descargar detalle de ventas
