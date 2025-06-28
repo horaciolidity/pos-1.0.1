@@ -1,93 +1,125 @@
-const canal = new BroadcastChannel('pos_channel');
-const lista  = document.getElementById('lista');
-const total  = document.getElementById('total');
-const mostrarHistorial = localStorage.getItem('mostrarHistorial') === 'true';
+/* ============================================================
+   VISOR CLIENTE
+   - Carrito en vivo   ← canal "pos_channel"
+   - Historial on-demand← canal "cliente_channel"
+============================================================ */
 
-/* 🟢 Render del carrito */
+/////////////////////////////
+// 1) REFERENCIAS DOM
+/////////////////////////////
+const lista      = document.getElementById('lista');
+const totalSpan  = document.getElementById('total');
+const divHist    = document.getElementById('historial');
+const tituloHist = document.getElementById('tituloHistorial');
+const deudaHist  = document.getElementById('deudaHistorial');
+const tbodyHist  = document.getElementById('tablaHistorial');
+
+/////////////////////////////
+// 2) CANALES
+/////////////////////////////
+const canalCarrito  = new BroadcastChannel('pos_channel');      // carrito en vivo
+const canalControl  = new BroadcastChannel('cliente_channel');  // mostrar/ocultar historial
+
+/////////////////////////////
+// 3) ESTADO LOCAL
+/////////////////////////////
+let historialActivo   = false;
+let clienteActivoId   = null;
+
+/////////////////////////////
+// 4) RENDER CARRITO
+/////////////////////////////
 function renderCarrito(productos = []) {
   lista.innerHTML = '';
-  let totalFinal = 0;
+  let total = 0;
 
   productos.forEach(p => {
     const subtotal = p.precioUnitario * p.cantidad;
     const li = document.createElement('li');
     li.textContent = `${p.cantidad} x ${p.nombre} ($${p.precioUnitario.toFixed(2)}) = $${subtotal.toFixed(2)}`;
     lista.appendChild(li);
-    totalFinal += subtotal;
+    total += subtotal;
   });
 
-  total.textContent = totalFinal.toFixed(2);
+  totalSpan.textContent = total.toFixed(2);
 }
 
-/* 📋 Historial (solo si está activado el flag) */
-function cargarHistorialCliente() {
-  if (!mostrarHistorial) {
-    const hist = document.getElementById('historial');
-    if (hist) hist.style.display = 'none';
-    return;
-  }
-
-  const id = localStorage.getItem('clienteSeleccionado');
+/////////////////////////////
+// 5) RENDER / LIMPIAR HISTORIAL
+/////////////////////////////
+function renderHistorial(clienteId) {
   const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
-  const c = clientes.find(cl => cl.id === id);
+  const c = clientes.find(cli => cli.id === clienteId);
 
-  const divHist = document.getElementById('historial');
-  const tbody = document.getElementById('tablaHistorial');
+  if (!c) { clearHistorial(); return; }
 
-  if (!c || !divHist) return;
+  // Cabeceras
+  tituloHist.textContent = `Historial de ventas – ${c.nombre}`;
+  deudaHist.textContent  = `💰 Total adeudado: $${c.saldo.toFixed(2)}`;
+
+  // Tabla
+  tbodyHist.innerHTML = '';
+  if (!c.historial || c.historial.length === 0) {
+    tbodyHist.innerHTML =
+      '<tr><td colspan="5" style="text-align:center;">Sin ventas registradas</td></tr>';
+  } else {
+    c.historial.forEach(reg => {
+      const [f,h] = reg.fecha.split(',').map(t => t.trim());
+      reg.productos.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${f}</td><td>${h}</td>
+          <td>${p.detalle}</td><td>${p.cantidad}</td>
+          <td>$${p.precio.toFixed(2)}</td>`;
+        tbodyHist.appendChild(tr);
+      });
+    });
+  }
 
   divHist.style.display = 'block';
-
-  document.getElementById('tituloHistorial').textContent =
-    `Historial de ventas – ${c.nombre}`;
-  document.getElementById('deudaHistorial').textContent =
-    `💰 Total adeudado: $${c.saldo.toFixed(2)}`;
-
-  tbody.innerHTML = '';
-  if (!c.historial || c.historial.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Sin ventas registradas</td></tr>`;
-    return;
-  }
-
-  c.historial.forEach(reg => {
-    const [fecha, hora] = reg.fecha.split(',').map(t => t.trim());
-    reg.productos.forEach(p => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${fecha}</td>
-        <td>${hora}</td>
-        <td>${p.detalle}</td>
-        <td>${p.cantidad}</td>
-        <td>$${p.precio.toFixed(2)}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-  });
+  historialActivo = true;
+  clienteActivoId = clienteId;
 }
 
-// Mostrar historial si corresponde al cargar la página
-cargarHistorialCliente();
+function clearHistorial() {
+  divHist.style.display = 'none';
+  tbodyHist.innerHTML   = '';
+  historialActivo       = false;
+  clienteActivoId       = null;
+}
 
-/* 🔁 Respuesta a eventos desde la caja */
-canal.onmessage = e => {
-  const data = e.data;
+/////////////////////////////
+// 6) ESCUCHAR CANAL CONTROL
+/////////////////////////////
+canalControl.onmessage = ev => {
+  const { tipo, clienteId } = ev.data;
 
-  if (data.tipo === 'carrito') {
-    renderCarrito(data.productos);
+  if (tipo === 'mostrar_historial') {
+    renderHistorial(clienteId);
   }
 
-  if (data.tipo === 'reset') {
-    renderCarrito([]);
+  if (tipo === 'ocultar_historial') {
+    clearHistorial();
   }
+};
 
+/////////////////////////////
+// 7) ESCUCHAR CARRITO EN VIVO
+/////////////////////////////
+canalCarrito.onmessage = ev => {
+  const data = ev.data;
+
+  if (data.tipo === 'carrito')        renderCarrito(data.productos);
+  if (data.tipo === 'reset')          renderCarrito([]);
   if (data.tipo === 'despedida') {
     renderCarrito([]);
     const msg = document.createElement('li');
     msg.textContent = 'GRACIAS Y VUELVA PRONTO';
-    msg.style.cssText = 'text-align:center;font-size:40px;color:#ffff00;text-shadow:0 0 10px #ff0';
+    msg.style.cssText = 'text-align:center;font-size:40px;color:#ff0;text-shadow:0 0 10px #ff0';
     lista.appendChild(msg);
     setTimeout(() => renderCarrito([]), 10000);
   }
 
-  if (mostrarHistorial) cargarHistorialCliente();
+  /* Si el historial está activo → refrescar deuda y tabla */
+  if (historialActivo && clienteActivoId) renderHistorial(clienteActivoId);
 };
