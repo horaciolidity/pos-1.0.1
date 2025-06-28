@@ -177,6 +177,8 @@ function asignarAVentaCliente() {
     total
   });
   saveClientes(clientes);
+// Guardamos cuál cliente quedó “activo” para que el visor-cliente lo sepa
+localStorage.setItem('clienteSeleccionado', cliente.id);
 
   alert(
     `Venta cargada a ${cliente.nombre}. Nuevo saldo: $${cliente.saldo.toFixed(2)}`
