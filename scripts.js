@@ -25,8 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     displayProducts();
     updateTotalPrice();
-    renderClientes();
-    refrescarListaClientes();
 
     const input = document.getElementById('opening-cash');
     const yaInicioCaja = localStorage.getItem('openingCashSet') === 'true';
@@ -43,18 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 4000);
 });
-
-
-
-/* =========================================================
-   CLIENTES – helpers
-   =========================================================*/
-function getClientes()        { return JSON.parse(localStorage.getItem('clientes')) || []; }
-function saveClientes(data)   { localStorage.setItem('clientes', JSON.stringify(data)); }
-
-/* estado global para la venta en curso */
-let clienteSeleccionado = null;
-
 
 
 function getProducts() {
@@ -104,28 +90,6 @@ function addProduct() {
 
         clearForm();
     }
-}
-
-/* ---------- Buscador dinámico ---------- */
-const clienteInput = document.getElementById('cliente-input');
-const clienteLista = document.getElementById('lista-clientes');
-
-function refrescarListaClientes(filtro = '') {
-  const filtroNorm = filtro.toLowerCase();
-
-  const html = getClientes()
-    .filter(c => {
-      const nombre = (c.name || c.nombre || '').toLowerCase(); // ← Fallbacks
-      return nombre.includes(filtroNorm);
-    })
-    .map(c => {
-      const nombre = c.name || c.nombre || 'Sin nombre';
-      const saldo  = (+c.saldo || 0).toFixed(2);
-      return `<li data-id="${c.id}">${nombre} – saldo $${saldo}</li>`;
-    })
-    .join('');
-
-  clienteLista.innerHTML = html || '<li class="mute">Sin coincidencias</li>';
 }
 
 
@@ -445,81 +409,50 @@ Object.entries(quantitiesToDeduct).forEach(([code, quantity]) => {
 }
 
 function consultarTotalVendido() {
-  const ventasModal       = document.getElementById('ventas-modal');
-  const ventasDetalle     = document.getElementById('ventas-detalle');
-  const totalVendidoModal = document.getElementById('total-vendido-modal');
-  const ventas            = getVentas(); // historial real
-  const productos         = getProducts();
-  const clientes          = JSON.parse(localStorage.getItem('clientes')) || [];
+    const totalVendido        = localStorage.getItem('totalVendido') || '0.00';
+    const ventasModal         = document.getElementById('ventas-modal');
+    const ventasDetalle       = document.getElementById('ventas-detalle');
+    const totalVendidoModal   = document.getElementById('total-vendido-modal');
 
-  let totalReal = 0;
-  let ventasHtml = '';
+    ventasDetalle.innerHTML = '';
 
-  if (ventas.length > 0) {
-    ventasHtml += `<h3>Detalle de ventas realizadas</h3>`;
-    ventas.forEach((venta, i) => {
-      const fecha = venta.timestamp || venta.date || venta.timestampIso || venta.dateISO || '---';
-      const cliente = clientes.find(c => c.id === venta.clientId);
-      const nombreCliente = cliente ? cliente.name : '—';
-
-      const items = (venta.cart || venta.products || []).map(p => {
-        const qty = p.qty || p.quantity;
-        return `<li>${qty}× ${p.name}</li>`;
-      }).join('');
-
-      const totalVenta = venta.total || (venta.cart || []).reduce((s, p) => s + p.price * p.quantity, 0);
-      totalReal += totalVenta;
-
-      ventasHtml += `
-        <li>
-          <strong>${fecha}</strong> – $${totalVenta.toFixed(2)} – Cliente: ${nombreCliente}
-          <ul>${items}</ul>
-        </li>`;
+    const products = getProducts();
+    let productosHtml = '';
+    products.forEach(p => {
+        if (p.sold > 0) {
+            productosHtml += `
+                <li>${p.name} - Precio: $${p.price} - Cantidad vendida: ${p.sold}</li>
+            `;
+        }
     });
-  } else {
-    ventasHtml = '<p>No hay ventas registradas.</p>';
-  }
+    if (!productosHtml) productosHtml = '<li>No hay productos vendidos aún.</li>';
 
-  // Productos vendidos
-  let productosHtml = '';
-  productos.forEach(p => {
-    if (p.sold > 0) {
-      productosHtml += `<li>${p.name} - Precio: $${p.price} - Cantidad vendida: ${p.sold}</li>`;
+    const clientes  = JSON.parse(localStorage.getItem('clientes')) || [];
+    const deudores  = clientes.filter(c => parseFloat(c.saldo || 0) > 0);
+
+    let deudoresHtml = '';
+    let totalDeuda   = 0;
+
+    if (deudores.length > 0) {
+        deudoresHtml += '<hr><h3>Clientes con deuda</h3>';
+        deudores.forEach((c, i) => {
+            const deuda = parseFloat(c.saldo).toFixed(2);
+            totalDeuda += parseFloat(c.saldo);
+            deudoresHtml += `<li>${i + 1}. ${c.nombre} — Tel: ${c.telefono || '---'} — Debe $${deuda}</li>`;
+        });
+        deudoresHtml += `<p><strong>Total deuda acumulada: $${totalDeuda.toFixed(2)}</strong></p>`;
+    } else {
+        deudoresHtml += '<p>No hay clientes con deuda.</p>';
     }
-  });
-  if (!productosHtml) productosHtml = '<li>No hay productos vendidos aún.</li>';
 
-  // Clientes con deuda
-  const deudores = clientes.filter(c => parseFloat(c.saldo || 0) > 0);
-  let deudoresHtml = '';
-  let totalDeuda = 0;
-
-  if (deudores.length > 0) {
-    deudoresHtml += '<hr><h3>Clientes con deuda</h3>';
-    deudores.forEach((c, i) => {
-      const deuda = parseFloat(c.saldo).toFixed(2);
-      totalDeuda += parseFloat(c.saldo);
-      deudoresHtml += `<li>${i + 1}. ${c.name || c.nombre} — Tel: ${c.telefono || '---'} — Debe $${deuda}</li>`;
-    });
-    deudoresHtml += `<p><strong>Total deuda acumulada: $${totalDeuda.toFixed(2)}</strong></p>`;
-  } else {
-    deudoresHtml += '<p>No hay clientes con deuda.</p>';
-  }
-
-  ventasDetalle.innerHTML = `
-    ${ventasHtml}
-    <hr><h3>Resumen por producto</h3>
-    <ul>${productosHtml}</ul>
-    ${deudoresHtml}
-  `;
-
-  totalVendidoModal.textContent = '$' + totalReal.toFixed(2);
-  ventasModal.style.display = 'block';
+    ventasDetalle.innerHTML  = productosHtml + deudoresHtml;
+    totalVendidoModal.textContent = totalVendido;
+    ventasModal.style.display = 'block';
 }
 
-// Cierre del modal
 document.querySelector('.close').onclick = () =>
   document.getElementById('ventas-modal').style.display = 'none';
+
 
 // Descargar detalle de ventas
 function downloadVentas() {
@@ -677,21 +610,22 @@ function saveSale(cart, paymentMethod) {
 }
 
 function finalizeSale(method) {
-  /* 1) Validaciones básicas ----------------------------------------- */
+  /*-------------------------------------------------------
+    1) Validaciones básicas
+  -------------------------------------------------------*/
   const cartItems = document.querySelectorAll('#cart li');
-  if (cartItems.length === 0) { alert('El carrito está vacío'); return; }
+  if (cartItems.length === 0) {
+    alert('El carrito está vacío');
+    return;
+  }
 
   const products = getProducts();
   const cart     = [];
   let   hasStock = false;
 
-  /* 2) Datos de FECHA ya al inicio ---------------------------------- */
-  const fechaObj     = new Date();
-  const timestamp    = fechaObj.toLocaleString();   // legible
-  const timestampIso = fechaObj.toISOString();      // ISO
-  const timestampMs  = fechaObj.getTime();
-
-  /* 3) Recorremos carrito y actualizamos inventario ----------------- */
+  /*-------------------------------------------------------
+    2) Recorremos el carrito y actualizamos inventario
+  -------------------------------------------------------*/
   cartItems.forEach(item => {
     const code       = item.dataset.code;
     const quantity   = parseFloat(item.querySelector('.quantity').textContent);
@@ -706,66 +640,59 @@ function finalizeSale(method) {
       hasStock = true;
     }
 
+    /* Armamos detalle para registrar la venta */
     cart.push({
       code,
-      name     : product.name,
-      price    : totalPrice / quantity,  // unitario
+      name: product.name,
+      price: totalPrice / quantity,   // precio unitario
       quantity,
-      cost     : product.cost || 0
+      cost: product.cost || 0
     });
   });
+
   if (hasStock) return;   // aborta si hay problemas de stock
 
-  /* 4) Totales y ganancia ------------------------------------------- */
-  const totalVenta = cart.reduce((s,p)=> s + p.price * p.quantity, 0);
-  const costoVenta = cart.reduce((s,p)=> s + p.cost  * p.quantity, 0);
-  const ganancia   = totalVenta - costoVenta;
+  /*-------------------------------------------------------
+    3) Datos de la venta
+  -------------------------------------------------------*/
+  const novedades      = prompt("¿Desea agregar alguna novedad sobre esta venta? (opcional)") || "";
+  const fechaObj       = new Date();
+  const timestamp      = fechaObj.toLocaleString();  // legible
+  const timestampIso   = fechaObj.toISOString();     // ISO → arqueo mensual
+  const timestampMs    = fechaObj.getTime();         // opcional, para comparar rápido
 
-  /* 5) Construimos la venta ----------------------------------------- */
-  const novedades = prompt("¿Desea agregar alguna novedad sobre esta venta? (opcional)") || "";
-  const venta = {
-    id        : timestampMs.toString(),
-    timestamp,
-    timestampIso,
-    timestampMs,
-    cart,
-    total     : totalVenta,
-    profit    : ganancia,
-    clientId  : clienteSeleccionado?.id || null,
-    paymentMethod : method,
-    novedades
-  };
+  const venta = { cart, paymentMethod: method, timestamp, timestampIso, timestampMs, novedades };
 
-  /* 6) Guardamos en localStorage.sales ------------------------------ */
-  const ventas = getVentas();
-  ventas.push(venta);
-  saveVentas(ventas);
+  /*-------------------------------------------------------
+    4) Guardamos en localStorage
+  -------------------------------------------------------*/
+  const sales = JSON.parse(localStorage.getItem('sales')) || [];
+  sales.push(venta);
+  localStorage.setItem('sales', JSON.stringify(sales));
 
-  /* 7) Historial del cliente ---------------------------------------- */
-  if (clienteSeleccionado) {
-    const clientes = getClientes();
-    const cli      = clientes.find(c => c.id === clienteSeleccionado.id);
-    cli.saldo     = (+cli.saldo || 0) + totalVenta;
-    cli.historial = cli.historial || [];
-    cli.historial.push({
-      dateISO : timestampIso,
-      items   : cart,
-      total   : totalVenta
-    });
-    saveClientes(clientes);
-  }
+  /*-------------------------------------------------------
+    5) Actualizamos totalVendido (independiente del método)
+  -------------------------------------------------------*/
+  const totalVenta   = cart.reduce((acc, p) => acc + (p.price * p.quantity), 0);
+  const totalVendido = parseFloat(localStorage.getItem('totalVendido')) || 0;
+  localStorage.setItem('totalVendido', (totalVendido + totalVenta).toFixed(2));
 
-  /* 8) Persistimos inventario y limpiamos interfaz ------------------ */
+  /*-------------------------------------------------------
+    6) Persistimos inventario y limpiamos interfaz
+  -------------------------------------------------------*/
   saveProducts(products);
   document.getElementById('cart').innerHTML = '';
   document.getElementById('total-price').textContent = '0.00';
-  clienteSeleccionado = null;
   alert(`Venta registrada con pago: ${method}`);
 
   displayProducts();
   updateTotalPrice();
+
+  /*-------------------------------------------------------
+    7) Notificación Broadcast (optional)
+  -------------------------------------------------------*/
   const canal = new BroadcastChannel('pos_channel');
-  canal.postMessage({ tipo: 'venta' });
+  canal.postMessage({ tipo: 'despedida' });
 }
 
 function showSalesSummary() {
@@ -867,11 +794,12 @@ function downloadSummary() {
 
 
 
-/* =========================================================
-   VENTAS – helpers  (todo irá a localStorage.sales)
-   =========================================================*/
-function getVentas()        { return JSON.parse(localStorage.getItem('sales')) || []; }
-function saveVentas(data)   { localStorage.setItem('sales', JSON.stringify(data)); }
+function getVentas() {
+  return JSON.parse(localStorage.getItem('ventas')) || [];
+}
+function saveVentas(ventas) {
+  localStorage.setItem('ventas', JSON.stringify(ventas));
+}
 
 
 
@@ -912,79 +840,7 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem('currentUser');   // borra la sesión
   window.location.href = 'login_empleado.html';
 });
-
-/* ---------- Tabla de clientes ---------- */
-function formatearFecha(iso){
-  const d=new Date(iso);
-  return d.toLocaleDateString()+' '+d.toLocaleTimeString();
-}
-
-function tablaHistorial(hist) {
-
-  // Si no es array o está vacío
-  if (!Array.isArray(hist) || hist.length === 0) {
-    return '<em>Sin ventas registradas</em>';
-  }
-
-  return `<table class="subtabla">
-    <thead><tr><th>Fecha</th><th>Productos</th><th>Total</th></tr></thead>
-    <tbody>${
-      hist.map(h => {
-        // ⬇⬇  Fallbacks defensivos  ⬇⬇
-        const fecha  = h.dateISO || h.fecha || h.timestampIso || h.timestamp || '---';
-        const items  = Array.isArray(h.items) ? h.items : [];
-        const lista  = items.length
-          ? items.map(i => `<li>${(i.quantity || i.qty || 0)}× ${i.name || i.product || '—'}</li>`).join('')
-          : '<li>—</li>';
-        const total  = (h.total !== undefined) ? h.total : 0;
-
-        return `<tr>
-          <td>${formatearFecha(fecha)}</td>
-          <td><ul>${lista}</ul></td>
-          <td>$${(+total).toFixed(2)}</td>
-        </tr>`;
-      }).join('')
-    }</tbody>
-  </table>`;
-}
-
-
-
-function renderClientes(){
-  const tbody = document.getElementById('tabla-clientes'); 
-  const clientes=getClientes();
-  tbody.innerHTML=clientes.map(c=>`
-    <tr>
-      <td>${c.name}</td>
-      <td>$${(+c.saldo).toFixed(2)}</td>
-      <td>
-        <button data-id="${c.id}" class="ver-detalle">Detalle</button>
-        <button data-id="${c.id}" class="reset-saldo danger">Resetear</button>
-      </td>
-    </tr>
-    <tr id="det-${c.id}" class="hidden">
-      <td colspan="3">${c.historial?.length?tablaHistorial(c.historial):'<em>Sin ventas</em>'}</td>
-    </tr>`
-  ).join('');
-}
-
-/* clicks detalle / reset */
-document.addEventListener('click', e=>{
-  if(e.target.matches('.ver-detalle')){
-    document.getElementById('det-'+e.target.dataset.id).classList.toggle('hidden');
-  }
-  if(e.target.matches('.reset-saldo')){
-    if(!confirm('¿Resetear cuenta de este cliente?'))return;
-    const clientes=getClientes();
-    const cli=clientes.find(c=>c.id===e.target.dataset.id);
-    cli.saldo=0; cli.historial=[];
-    saveClientes(clientes);
-    renderClientes();
-  }
-});
-
-
-
+ 
 function soloAdmin(fn) {
   return (...args) => {
     if (!isAdmin) {
@@ -1003,4 +859,3 @@ updateProduct         = soloAdmin(updateProduct);
 consultarTotalVendido = soloAdmin(consultarTotalVendido);
 limpiarTotalVendido   = soloAdmin(limpiarTotalVendido);
 setOpeningCash        = soloAdmin(setOpeningCash);
-
