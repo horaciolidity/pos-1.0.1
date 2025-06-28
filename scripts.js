@@ -1,12 +1,13 @@
 
-const session = JSON.parse(localStorage.getItem('currentUser')) || { role: 'empleado' };
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const session = JSON.parse(localStorage.getItem('currentUser')) || { role: 'empleado' };
 const isAdmin = session.role === 'admin';
 
 if (!session) {
   window.location.href = 'login_empleado.html';
 }
-
-document.addEventListener('DOMContentLoaded', () => {
   if (!isAdmin) {
     document.querySelectorAll('.admin-only').forEach(btn => {
      
