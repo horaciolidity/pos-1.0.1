@@ -491,34 +491,27 @@ window.onclick = function(event) {
 
 
 function limpiarTotalVendido() {
-    // Borrar total vendido del turno actual (pero NO el historial)
     localStorage.removeItem('totalVendido');
-
-    // 🔴 NO BORRAR el historial mensual de ventas
-    // localStorage.removeItem('ventas');
-
-    // Borrar apertura de caja
     localStorage.removeItem('openingCash');
     localStorage.setItem('openingCashSet', 'false');
 
-    // Resetear 'sold' en los productos (solo para mostrar limpio en la interfaz)
     const products = getProducts();
     products.forEach(product => {
         product.sold = 0;
     });
     saveProducts(products);
 
-    // Actualizar interfaz
     displayProducts();
     document.getElementById("sales-summary").value = '';
     document.getElementById("opening-cash").disabled = false;
 
-    alert('Turno reiniciado. Historial mensual de ventas conservado.');
+    alert('Turno reiniciado. Historial mensual conservado.');
 
     if (typeof resetCliente === 'function') {
         resetCliente();
     }
 }
+
 
 
 function handleFileSelect(event) {
@@ -813,9 +806,9 @@ function checkStock(product) {
 
 
 function resetDay() {
-    // NO eliminar ventas si querés conservar el arqueo mensual
+    // 🔴 NO eliminar las ventas
     // localStorage.removeItem('sales');
-    
+
     localStorage.removeItem('openingCash');
     localStorage.removeItem('openingCashSet');
     localStorage.removeItem('totalVendido');
@@ -835,6 +828,7 @@ function resetDay() {
 
     alert("Caja y totales del turno limpiados. Historial mensual conservado.");
 }
+
 
 document.getElementById('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem('currentUser');   // borra la sesión
