@@ -352,7 +352,7 @@ ul li:hover {
 
 
 /* Inputs y selects */
-input[type="text"],
+
 input[type="password"],
 input[type="number"],
 select {
@@ -360,7 +360,10 @@ select {
   border: 1px solid #999;
   color: white;
 }
-
+input[type="text"],
+{
+    color: black;
+}
 /* Placeholder más oscuro */
 input::placeholder {
   color: #666;
