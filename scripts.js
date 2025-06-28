@@ -409,61 +409,37 @@ Object.entries(quantitiesToDeduct).forEach(([code, quantity]) => {
 }
 
 function consultarTotalVendido() {
-  const ventas = JSON.parse(localStorage.getItem('ventas')) || [];
+   const ventas = JSON.parse(localStorage.getItem('ventas')) || [];
   const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
   const modal = document.getElementById('ventas-modal');
   const detalleLista = document.getElementById('ventas-detalle');
   const totalSpan = document.getElementById('total-vendido-modal');
   const summaryText = document.getElementById('sales-summary');
 
-  let total = 0;
-  let resumen = '── REGISTRO DE VENTAS ──\n\n';
+    ventasDetalle.innerHTML = ''; // Limpiar el detalle de ventas
+    const products = getProducts();
 
-  detalleLista.innerHTML = '';
+    let productosVendidos = '';
+    products.forEach(product => {
+       if (product.sold > 0) { 
+    productosVendidos += `
+        <li>${product.name} - Precio: $${product.price} - Cantidad vendida: ${product.sold}</li>
+    `;
+}
 
-  ventas.forEach((venta, index) => {
-    total += venta.total;
-
-    let productosDetalle = venta.productos.map(p =>
-      `${p.nombre} x${p.cantidad} - $${p.precio}`
-    ).join('\n');
-
-    const li = document.createElement('li');
-    li.textContent = `Venta #${index + 1} - $${venta.total.toFixed(2)}`;
-    detalleLista.appendChild(li);
-
-    resumen += `Venta #${index + 1} - Fecha: ${venta.fecha}\n`;
-    resumen += `Pago: ${venta.metodo}\n`;
-    resumen += `${productosDetalle}\n`;
-    if (venta.cliente) resumen += `Asignado a cliente: ${venta.cliente}\n`;
-    resumen += '────────────\n';
-  });
-
-  resumen += `\nTOTAL VENDIDO: $${total.toFixed(2)}\n`;
-
-  // Agregar sección de deudores
-  resumen += '\n── CLIENTES CON DEUDA ──\n\n';
-
-  const deudores = clientes.filter(c => parseFloat(c.deuda || 0) > 0);
-  if (deudores.length === 0) {
-    resumen += 'No hay clientes con deuda.\n';
-  } else {
-    deudores.forEach((c, i) => {
-      resumen += `${i + 1}. ${c.nombre} - Tel: ${c.telefono || '---'} - Deuda: $${parseFloat(c.deuda).toFixed(2)}\n`;
     });
-  }
 
-  detalleLista.style.display = 'block';
-  totalSpan.textContent = total.toFixed(2);
-  totalSpan.style.display = 'inline';
-  summaryText.value = resumen;
-
-  modal.style.display = 'flex';
+    ventasDetalle.innerHTML = productosVendidos || '<li>No hay productos vendidos aún.</li>';
+    totalVendidoModal.textContent = totalVendido ? totalVendido : '0.00';
+    
+    ventasModal.style.display = 'block'; // Mostrar el modal
 }
 
-function cerrarModalClientes() {
-  document.getElementById('modal-clientes').style.display = 'none';
-}
+// Cerrar el modal
+const closeModal = document.querySelector('.close');
+closeModal.onclick = function() {
+    document.getElementById('ventas-modal').style.display = 'none';
+};
 
 // Descargar detalle de ventas
 function downloadVentas() {
