@@ -355,7 +355,7 @@ table,
 input,
 button,
 label {
-  color: #111;              /* texto casi negro para máxima legibilidad */
+  color: #white;              /* texto casi negro para máxima legibilidad */
 }
 
 /* Fondos: sigue claro, pero con sombra sutil */
