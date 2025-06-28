@@ -110,26 +110,23 @@ function addProduct() {
 const clienteInput = document.getElementById('cliente-input');
 const clienteLista = document.getElementById('lista-clientes');
 
-function refrescarListaClientes(filtro='') {
+function refrescarListaClientes(filtro = '') {
+  const filtroNorm = filtro.toLowerCase();
+
   const html = getClientes()
-    .filter(c => c.name.toLowerCase().includes(filtro.toLowerCase()))
-    .map(c => `<li data-id="${c.id}">${c.name} – saldo $${(+c.saldo).toFixed(2)}</li>`)
+    .filter(c => {
+      const nombre = (c.name || c.nombre || '').toLowerCase(); // ← Fallbacks
+      return nombre.includes(filtroNorm);
+    })
+    .map(c => {
+      const nombre = c.name || c.nombre || 'Sin nombre';
+      const saldo  = (+c.saldo || 0).toFixed(2);
+      return `<li data-id="${c.id}">${nombre} – saldo $${saldo}</li>`;
+    })
     .join('');
+
   clienteLista.innerHTML = html || '<li class="mute">Sin coincidencias</li>';
 }
-
-clienteInput.addEventListener('input', e => refrescarListaClientes(e.target.value));
-
-clienteLista.addEventListener('click', e => {
-  if (!e.target.dataset.id) return;
-  clienteSeleccionado = getClientes().find(c => c.id === e.target.dataset.id);
-  clienteInput.value  = clienteSeleccionado.name;
-  clienteLista.innerHTML = '';
-});
-
-
-
-
 
 
 
