@@ -954,7 +954,7 @@ function tablaHistorial(hist) {
 
 
 function renderClientes(){
-  const tbody=document.getElementById('clientes-tbody');
+  const tbody = document.getElementById('tabla-clientes'); 
   const clientes=getClientes();
   tbody.innerHTML=clientes.map(c=>`
     <tr>
