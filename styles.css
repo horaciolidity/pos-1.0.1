@@ -315,7 +315,7 @@ input[type="password"],
 select {
   background: #fafafa;
   border: 1px solid #999;
-  color: white;
+  color: black;
 }
 input[type="text"],
 {
