@@ -43,6 +43,18 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+
+/* =========================================================
+   CLIENTES – helpers
+   =========================================================*/
+function getClientes()        { return JSON.parse(localStorage.getItem('clientes')) || []; }
+function saveClientes(data)   { localStorage.setItem('clientes', JSON.stringify(data)); }
+
+/* estado global para la venta en curso */
+let clienteSeleccionado = null;
+
+
+
 function getProducts() {
     return JSON.parse(localStorage.getItem('products')) || [];
 }
