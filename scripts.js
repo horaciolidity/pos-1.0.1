@@ -104,6 +104,31 @@ function addProduct() {
     }
 }
 
+/* ---------- Buscador dinámico ---------- */
+const clienteInput = document.getElementById('cliente-input');
+const clienteLista = document.getElementById('lista-clientes');
+
+function refrescarListaClientes(filtro='') {
+  const html = getClientes()
+    .filter(c => c.name.toLowerCase().includes(filtro.toLowerCase()))
+    .map(c => `<li data-id="${c.id}">${c.name} – saldo $${(+c.saldo).toFixed(2)}</li>`)
+    .join('');
+  clienteLista.innerHTML = html || '<li class="mute">Sin coincidencias</li>';
+}
+
+clienteInput.addEventListener('input', e => refrescarListaClientes(e.target.value));
+
+clienteLista.addEventListener('click', e => {
+  if (!e.target.dataset.id) return;
+  clienteSeleccionado = getClientes().find(c => c.id === e.target.dataset.id);
+  clienteInput.value  = clienteSeleccionado.name;
+  clienteLista.innerHTML = '';
+});
+
+
+
+
+
 
 
 function clearForm() {
@@ -661,6 +686,21 @@ function finalizeSale(method) {
       cost: product.cost || 0
     });
   });
+/* REGISTRA EN HISTORIAL DEL CLIENTE (si corresponde) */
+if (clienteSeleccionado) {
+  const clientes = getClientes();
+  const cli      = clientes.find(c => c.id === clienteSeleccionado.id);
+  const totalVta = cart.reduce((acc, p) => acc + p.price * p.quantity, 0);
+
+  cli.saldo     = (+cli.saldo || 0) + totalVta;
+  cli.historial = cli.historial || [];
+  cli.historial.push({
+    dateISO : timestampIso,
+    items   : cart,
+    total   : totalVta
+  });
+  saveClientes(clientes);
+}
 
   if (hasStock) return;   // aborta si hay problemas de stock
 
@@ -852,7 +892,60 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem('currentUser');   // borra la sesión
   window.location.href = 'login_empleado.html';
 });
- 
+
+/* ---------- Tabla de clientes ---------- */
+function formatearFecha(iso){
+  const d=new Date(iso);
+  return d.toLocaleDateString()+' '+d.toLocaleTimeString();
+}
+
+function tablaHistorial(hist){
+  return `<table class="subtabla">
+    <thead><tr><th>Fecha</th><th>Productos</th><th>Total</th></tr></thead>
+    <tbody>${
+      hist.map(h=>`<tr>
+        <td>${formatearFecha(h.dateISO)}</td>
+        <td><ul>${h.items.map(i=>`<li>${i.quantity}× ${i.name}</li>`).join('')}</ul></td>
+        <td>$${h.total.toFixed(2)}</td>
+      </tr>`).join('')
+    }</tbody></table>`;
+}
+
+function renderClientes(){
+  const tbody=document.getElementById('clientes-tbody');
+  const clientes=getClientes();
+  tbody.innerHTML=clientes.map(c=>`
+    <tr>
+      <td>${c.name}</td>
+      <td>$${(+c.saldo).toFixed(2)}</td>
+      <td>
+        <button data-id="${c.id}" class="ver-detalle">Detalle</button>
+        <button data-id="${c.id}" class="reset-saldo danger">Resetear</button>
+      </td>
+    </tr>
+    <tr id="det-${c.id}" class="hidden">
+      <td colspan="3">${c.historial?.length?tablaHistorial(c.historial):'<em>Sin ventas</em>'}</td>
+    </tr>`
+  ).join('');
+}
+
+/* clicks detalle / reset */
+document.addEventListener('click', e=>{
+  if(e.target.matches('.ver-detalle')){
+    document.getElementById('det-'+e.target.dataset.id).classList.toggle('hidden');
+  }
+  if(e.target.matches('.reset-saldo')){
+    if(!confirm('¿Resetear cuenta de este cliente?'))return;
+    const clientes=getClientes();
+    const cli=clientes.find(c=>c.id===e.target.dataset.id);
+    cli.saldo=0; cli.historial=[];
+    saveClientes(clientes);
+    renderClientes();
+  }
+});
+
+
+
 function soloAdmin(fn) {
   return (...args) => {
     if (!isAdmin) {
