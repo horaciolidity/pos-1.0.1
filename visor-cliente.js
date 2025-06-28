@@ -22,7 +22,8 @@ function renderCarrito(productos = []) {
 /* 📋 Historial (solo si está activado el flag) */
 function cargarHistorialCliente() {
   if (!mostrarHistorial) {
-    document.getElementById('historial').style.display = 'none';
+    const hist = document.getElementById('historial');
+    if (hist) hist.style.display = 'none';
     return;
   }
 
@@ -33,10 +34,7 @@ function cargarHistorialCliente() {
   const divHist = document.getElementById('historial');
   const tbody = document.getElementById('tablaHistorial');
 
-  if (!c) {
-    divHist.style.display = 'none';
-    return;
-  }
+  if (!c || !divHist) return;
 
   divHist.style.display = 'block';
 
@@ -67,10 +65,10 @@ function cargarHistorialCliente() {
   });
 }
 
-/* Inicial: cargar historial solo si está permitido */
+// Mostrar historial si corresponde al cargar la página
 cargarHistorialCliente();
 
-/* Evento desde caja */
+/* 🔁 Respuesta a eventos desde la caja */
 canal.onmessage = e => {
   const data = e.data;
 
@@ -91,6 +89,5 @@ canal.onmessage = e => {
     setTimeout(() => renderCarrito([]), 10000);
   }
 
-  /* Cada vez que llega algo → si corresponde, actualizamos historial */
   if (mostrarHistorial) cargarHistorialCliente();
 };
