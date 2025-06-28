@@ -413,17 +413,17 @@ a:hover {
 }
 
 .modal-content {
-  background-color: #1e1e1e;   /* Fondo oscuro sólido */
-  color: #f0f0f0;              /* Texto claro */
+  background-color: #1e1e1e;
+  color: #f0f0f0;
   padding: 25px;
   border-radius: 12px;
-  width: 80%;
+  width: 90%;
   max-width: 600px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-  position: relative;
   font-family: 'Segoe UI', sans-serif;
   max-height: 90vh;
   overflow-y: auto;
+  position: relative; /* ✅ necesario para el botón cerrar */
 }
 
 /* Botón de cierre */
