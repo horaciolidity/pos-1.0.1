@@ -274,19 +274,6 @@ ul li:hover {
   backdrop-filter: blur(4px);
 }
 
-.modal-content {
-  background-color: #121212;   /* ✅ más oscuro que #1e1e1e */
-  color: #e0e0e0;              /* ✅ blanco suave (menos brillo) */
-  margin: 5% auto;
-  padding: 25px;
-  border: 1px solid #333;
-  width: 80%;
-  max-width: 600px;
-  border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-  text-align: left;            /* mejor para lectura de textos largos */
-  font-family: 'Segoe UI', sans-serif;
-}
 
 /* Botón cerrar opcional */
 .modal .close {
@@ -362,23 +349,7 @@ ul li:hover {
 
 
 
-/* ─── Colores base más oscuros ───────────────────────── */
 
-.login-container,
-.modal-content,
-table,
-input,
-button,
-label {
-  color: #white;              /* texto casi negro para máxima legibilidad */
-}
-
-/* Fondos: sigue claro, pero con sombra sutil */
-.login-container,
-.modal-content {
-  background-color: #ffffff;
-  box-shadow: 0 0 12px rgba(0,0,0,0.25);
-}
 
 /* Inputs y selects */
 input[type="text"],
@@ -436,3 +407,62 @@ a:hover {
   text-decoration: underline;
 }
 
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.85); /* Fondo oscuro con transparencia */
+  backdrop-filter: blur(5px);            /* Desenfoque suave */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: #1e1e1e;   /* Fondo oscuro sólido */
+  color: #f0f0f0;              /* Texto claro */
+  padding: 25px;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 600px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+  position: relative;
+  font-family: 'Segoe UI', sans-serif;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Botón de cierre */
+.modal .close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.modal .close:hover {
+  color: #fff;
+}
+
+/* Botones dentro del modal */
+.modal-content button {
+  background-color: #333;
+  color: #f0f0f0;
+  border: none;
+  padding: 10px 20px;
+  margin: 10px 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.modal-content button:hover {
+  background-color: #444;
+}
