@@ -358,7 +358,7 @@ input[type="number"],
 select {
   background: #fafafa;
   border: 1px solid #999;
-  color: #111;
+  color: white;
 }
 
 /* Placeholder más oscuro */
@@ -396,7 +396,7 @@ table button:hover {
 
 /* Celdas de la tabla */
 #tabla-clientes td {
-  color: #111;
+  color: white;
 }
 
 /* Enlaces (ej.: cambiar de rol) */
