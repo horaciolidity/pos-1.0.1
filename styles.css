@@ -306,11 +306,12 @@ ul li:hover {
 
 
 
-
-/* Inputs y selects */
+input[type="number"],
+{
+    color: black;
+}
 
 input[type="password"],
-input[type="number"],
 select {
   background: #fafafa;
   border: 1px solid #999;
