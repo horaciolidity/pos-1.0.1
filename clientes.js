@@ -21,16 +21,14 @@ function cerrarModalClientes() {
   limpiarFormCliente();
 }
 
-/* ─────────── Modal HISTORIAL de un cliente (detalle de ventas) ─────── */
 function abrirDetalleCliente(id) {
   const cliente = getClientes().find(c => c.id === id);
   if (!cliente) return;
 
-  /* Título con el nombre */
-  document.getElementById("detalle-nombre-cliente").textContent =
-    `Historial de ventas – ${cliente.nombre}`;
+  // Mostrar título con total de deuda debajo
+  document.getElementById("detalle-nombre-cliente").innerHTML =
+    `Historial de ventas – ${cliente.nombre}<br><small>💰 Total adeudado: $${cliente.saldo.toFixed(2)}</small>`;
 
-  /* Construir la tabla */
   const tbody = document.getElementById("tabla-detalle-cliente");
   tbody.innerHTML = "";
 
@@ -40,7 +38,6 @@ function abrirDetalleCliente(id) {
     tbody.appendChild(tr);
   } else {
     cliente.historial.forEach(reg => {
-      /* "28/06/2025, 17:42:07" → dividimos fecha y hora */
       const [fecha, hora] = reg.fecha.split(",").map(t => t.trim());
       reg.productos.forEach(p => {
         const tr = document.createElement("tr");
@@ -58,6 +55,7 @@ function abrirDetalleCliente(id) {
 
   document.getElementById("modal-detalle-cliente").style.display = "block";
 }
+
 function cerrarModalDetalleCliente() {
   document.getElementById("modal-detalle-cliente").style.display = "none";
 }
