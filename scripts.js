@@ -1,3 +1,29 @@
+/* ────────────────────────────────
+   SESIÓN Y UTILIDAD DE PERMISOS
+───────────────────────────────── */
+const session = JSON.parse(localStorage.getItem('currentUser')) || { role: 'empleado' };
+const isAdmin = session.role === 'admin';
+
+if (!session) {
+  // Si alguien entra directo sin login, mándalo al de empleado
+  window.location.href = 'login_empleado.html';
+}
+
+/* Ocultá/Deshabilitá botones admin-only apenas cargue el DOM */
+document.addEventListener('DOMContentLoaded', () => {
+  if (!isAdmin) {
+    document.querySelectorAll('.admin-only').forEach(btn => {
+      // elegí el efecto que prefieras: ocultar o solo deshabilitar
+      // btn.style.display = 'none';
+      btn.disabled = true;
+    });
+  }
+});
+
+
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
     displayProducts();
     updateTotalPrice();
@@ -723,6 +749,8 @@ function checkStock(product) {
     }
 }
 
+
+
 function resetDay() {
     localStorage.removeItem('sales');
     localStorage.removeItem('openingCash');
@@ -745,4 +773,24 @@ function resetDay() {
 
     alert("Caja, ventas y arqueo limpiados exitosamente.");
 }
+
+
+function soloAdmin(fn) {
+  return (...args) => {
+    if (!isAdmin) {
+      alert('Acción reservada al administrador');
+      return;
+    }
+    return fn(...args);
+  };
+}
+
+/* Re-asigná tus funciones críticas */
+addProduct            = soloAdmin(addProduct);
+deleteProduct         = soloAdmin(deleteProduct);
+editProduct           = soloAdmin(editProduct);
+updateProduct         = soloAdmin(updateProduct);
+consultarTotalVendido = soloAdmin(consultarTotalVendido);
+limpiarTotalVendido   = soloAdmin(limpiarTotalVendido);
+setOpeningCash        = soloAdmin(setOpeningCash);
 
