@@ -430,7 +430,7 @@ function consultarTotalVendido() {
     ventasDetalle.innerHTML = productosVendidos || '<li>No hay productos vendidos aún.</li>';
     totalVendidoModal.textContent = totalVendido ? totalVendido : '0.00';
     
-    ventasModal.style.display = 'block'; // Mostrar el modal
+    ventasModal.style.display = 'flex'; // Mostrar el modal
 }
 
 // Cerrar el modal
