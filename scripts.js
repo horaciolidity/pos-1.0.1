@@ -772,7 +772,11 @@ function resetDay() {
     alert("Caja, ventas y arqueo limpiados exitosamente.");
 }
 
-
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  localStorage.removeItem('currentUser');   // borra la sesión
+  window.location.href = 'login_empleado.html';
+});
+ 
 function soloAdmin(fn) {
   return (...args) => {
     if (!isAdmin) {
