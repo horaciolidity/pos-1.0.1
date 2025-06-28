@@ -119,7 +119,6 @@ function renderTablaClientes() {
       <td>
         <button onclick="editarCliente('${c.id}')">✏️</button>
         <button onclick="eliminarCliente('${c.id}')">🗑️</button>
-        <button onclick="abrirVisorHistorialCliente('${c.id}')" title="Ver historial">👁️</button>
 
       </td>
       <td>
