@@ -341,3 +341,83 @@ ul li:hover {
   font-size: 1.3em;
   cursor: pointer;
 }
+
+
+
+
+
+
+/* ─── Colores base más oscuros ───────────────────────── */
+body,
+.login-container,
+.modal-content,
+table,
+input,
+button,
+label {
+  color: #111;              /* texto casi negro para máxima legibilidad */
+}
+
+/* Fondos: sigue claro, pero con sombra sutil */
+.login-container,
+.modal-content {
+  background-color: #ffffff;
+  box-shadow: 0 0 12px rgba(0,0,0,0.25);
+}
+
+/* Inputs y selects */
+input[type="text"],
+input[type="password"],
+input[type="number"],
+select {
+  background: #fafafa;
+  border: 1px solid #999;
+  color: #111;
+}
+
+/* Placeholder más oscuro */
+input::placeholder {
+  color: #666;
+}
+
+/* Botones principales */
+button {
+  background-color: #007bff;
+  color: #fff;
+}
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Botones de acción en tablas */
+table button {
+  background-color: #6c757d;
+  color: #fff;
+  border: none;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+table button:hover {
+  background-color: #545b62;
+}
+
+/* Encabezados de la tabla de clientes */
+#tabla-clientes th {
+  color: #000;
+  background: #e9ecef;
+}
+
+/* Celdas de la tabla */
+#tabla-clientes td {
+  color: #111;
+}
+
+/* Enlaces (ej.: cambiar de rol) */
+a {
+  color: #007bff;
+}
+a:hover {
+  text-decoration: underline;
+}
+
