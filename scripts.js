@@ -409,12 +409,10 @@ Object.entries(quantitiesToDeduct).forEach(([code, quantity]) => {
 }
 
 function consultarTotalVendido() {
-   const ventas = JSON.parse(localStorage.getItem('ventas')) || [];
-  const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
-  const modal = document.getElementById('ventas-modal');
-  const detalleLista = document.getElementById('ventas-detalle');
-  const totalSpan = document.getElementById('total-vendido-modal');
-  const summaryText = document.getElementById('sales-summary');
+    const totalVendido = localStorage.getItem('totalVendido');
+    const ventasModal = document.getElementById('ventas-modal');
+    const ventasDetalle = document.getElementById('ventas-detalle');
+    const totalVendidoModal = document.getElementById('total-vendido-modal');
 
     ventasDetalle.innerHTML = ''; // Limpiar el detalle de ventas
     const products = getProducts();
@@ -440,6 +438,7 @@ const closeModal = document.querySelector('.close');
 closeModal.onclick = function() {
     document.getElementById('ventas-modal').style.display = 'none';
 };
+
 
 // Descargar detalle de ventas
 function downloadVentas() {
