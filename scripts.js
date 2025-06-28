@@ -870,12 +870,11 @@ function downloadSummary() {
 
 
 
-function getVentas() {
-  return JSON.parse(localStorage.getItem('ventas')) || [];
-}
-function saveVentas(ventas) {
-  localStorage.setItem('ventas', JSON.stringify(ventas));
-}
+/* =========================================================
+   VENTAS – helpers  (todo irá a localStorage.sales)
+   =========================================================*/
+function getVentas()        { return JSON.parse(localStorage.getItem('sales')) || []; }
+function saveVentas(data)   { localStorage.setItem('sales', JSON.stringify(data)); }
 
 
 
