@@ -277,7 +277,7 @@ ul li:hover {
 
 .modal-content {
     background-color: #1e1e1e; /* Fondo oscuro para el contenido del modal */
-    color: #ffffff; /* Texto blanco para contraste */
+    color: #black; /* Texto blanco para contraste */
     margin: 10% auto;
     padding: 20px;
     border: 1px solid #444; /* Bordes más sutiles y oscuros */
@@ -290,7 +290,7 @@ ul li:hover {
 
 /* Estilo para el botón de cerrar */
 .close {
-    color: #ffffff; /* Texto blanco */
+    color: #black; /* Texto blanco */
     float: right;
     font-size: 24px;
     font-weight: bold;
@@ -307,7 +307,7 @@ ul li:hover {
 /* Estilo para los botones dentro del modal */
 .modal button {
     background-color: #444; /* Fondo oscuro en los botones */
-    color: #ffffff; /* Texto blanco */
+    color: #black; /* Texto blanco */
     border: none;
     padding: 10px 20px;
     margin: 10px;
