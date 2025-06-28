@@ -491,17 +491,17 @@ window.onclick = function(event) {
 
 
 function limpiarTotalVendido() {
-    // Borrar total de vendido (por compatibilidad)
+    // Borrar total vendido del turno actual (pero NO el historial)
     localStorage.removeItem('totalVendido');
 
-    // Borrar historial real de ventas
-    localStorage.removeItem('ventas');
+    // 🔴 NO BORRAR el historial mensual de ventas
+    // localStorage.removeItem('ventas');
 
     // Borrar apertura de caja
     localStorage.removeItem('openingCash');
     localStorage.setItem('openingCashSet', 'false');
 
-    // Resetear 'sold' en los productos
+    // Resetear 'sold' en los productos (solo para mostrar limpio en la interfaz)
     const products = getProducts();
     products.forEach(product => {
         product.sold = 0;
@@ -513,14 +513,13 @@ function limpiarTotalVendido() {
     document.getElementById("sales-summary").value = '';
     document.getElementById("opening-cash").disabled = false;
 
-    alert('Turno reiniciado. Todo el historial fue limpiado.');
-     if (typeof resetCliente === 'function') {
+    alert('Turno reiniciado. Historial mensual de ventas conservado.');
+
+    if (typeof resetCliente === 'function') {
         resetCliente();
     }
 }
 
-
-document.getElementById('fileInput').addEventListener('change', handleFileSelect, false);
 
 function handleFileSelect(event) {
     const file = event.target.files[0];
@@ -814,7 +813,9 @@ function checkStock(product) {
 
 
 function resetDay() {
-    localStorage.removeItem('sales');
+    // NO eliminar ventas si querés conservar el arqueo mensual
+    // localStorage.removeItem('sales');
+    
     localStorage.removeItem('openingCash');
     localStorage.removeItem('openingCashSet');
     localStorage.removeItem('totalVendido');
@@ -828,12 +829,11 @@ function resetDay() {
 
     displayProducts();
 
-    // 👉 Agregado
     if (typeof resetCliente === 'function') {
         resetCliente();
     }
 
-    alert("Caja, ventas y arqueo limpiados exitosamente.");
+    alert("Caja y totales del turno limpiados. Historial mensual conservado.");
 }
 
 document.getElementById('logoutBtn').addEventListener('click', () => {
