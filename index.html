@@ -158,6 +158,30 @@
     <div class="spinner"></div>
     <img src="https://despensas-margarita.vercel.app/despensa.jfif" alt="Imagen de Carga" id="loading-image">
 </div>
+<!-- ────────────────────────── MODAL CLIENTES ────────────────────────── -->
+<div id="modal-clientes" class="modal" style="display:none;">
+  <div class="modal-content" style="max-width:600px;">
+    <span class="close" onclick="cerrarModalClientes()">&times;</span>
+    <h2>Gestión de Clientes</h2>
+
+    <!-- Formulario alta / edición -->
+    <form id="form-cliente" onsubmit="guardarCliente(event)">
+      <input type="hidden" id="cliente-id">
+      <input type="text"  id="cliente-nombre"   placeholder="Nombre"   required>
+      <input type="text"  id="cliente-telefono" placeholder="Teléfono">
+      <button type="submit">Guardar</button>
+    </form>
+
+    <!-- Tabla listado -->
+    <table style="width:100%; margin-top:15px; text-align:left;">
+      <thead>
+        <tr><th>Nombre</th><th>Teléfono</th><th>Deuda</th><th>Acciones</th></tr>
+      </thead>
+      <tbody id="tabla-clientes"></tbody>
+    </table>
+  </div>
+</div>
+<!-- ───────────────────────────────────────────────────────────────────── -->
 
 
     <script src="scripts.js"></script>
