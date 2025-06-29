@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <title>Cliente</title>
   <link href="https://fonts.cdnfonts.com/css/ds-digital" rel="stylesheet">
+
   <style>
-    body {
+body {
       background-color: #000;
       color: #00ff00;
       font-family: 'DS-Digital', monospace;
@@ -50,67 +51,15 @@
       padding: 10px 20px;
       border-radius: 5px;
     }
-
-    /* Historial */
-    #historial {
-      margin-top: 60px;
-    }
-
-    #tituloHistorial {
-      margin-bottom: 10px;
-    }
-
-    #deudaHistorial {
-      font-size: 32px;
-      color: #ffff00;
-      text-shadow: 0 0 8px #ff0;
-      margin-bottom: 20px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 24px;
-    }
-
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #00ff00;
-    }
-
-    th {
-      color: #00ff00;
-      font-size: 26px;
-    }
-
-    td {
-      color: #ffffff;
-    }
   </style>
 </head>
 <body>
   <h1>Productos</h1>
   <ul id="lista"></ul>
   <h2>Total a pagar: $<span id="total">0.00</span></h2>
-
- <!-- Historial dinámico (solo se muestra si lo ordena la caja) -->
-  <div id="historial">
-    <h1 id="tituloHistorial">Historial de ventas –</h1>
-    <h2 id="deudaHistorial">💰 Total adeudado: $0.00</h2>
-   
-
-    <table>
-      <thead>
-        <tr>
-          <th>Fecha</th><th>Hora</th><th>Producto</th><th>Cant.</th><th>Total $</th>
-        </tr>
-      </thead>
-      <tbody id="tablaHistorial"></tbody>
-    </table>
-  </div>
+<script src="visor-cliente.js"></script>
 
 
-  <script src="visor-cliente.js"></script>
+
 </body>
 </html>
