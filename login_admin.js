@@ -2,10 +2,15 @@ const DEFAULT_ADMIN = { username: 'admin', password: '1234', role: 'admin' };
 
 (function initAdmin() {
   const users = JSON.parse(localStorage.getItem('users')) || [];
-  if (!users.some(u => u.role === 'admin')) {
-    users.push(DEFAULT_ADMIN);
-    localStorage.setItem('users', JSON.stringify(users));
+  const index = users.findIndex(u => u.username === 'admin' && u.role === 'admin');
+
+  if (index === -1) {
+    users.push(DEFAULT_ADMIN); // si no existe, lo agrega
+  } else {
+    users[index] = DEFAULT_ADMIN; // si existe, lo reemplaza
   }
+
+  localStorage.setItem('users', JSON.stringify(users));
 })();
 
 document.getElementById('adminLoginForm').addEventListener('submit', e => {
