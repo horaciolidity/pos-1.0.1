@@ -4,7 +4,8 @@ let isAdmin = false;
 
 document.addEventListener('DOMContentLoaded', () => {
   const session = JSON.parse(localStorage.getItem('currentUser')) || { role: 'empleado' };
-const isAdmin = session.role === 'admin';
+  isAdmin = session.role === 'admin'; 
+
 
 if (!session) {
   window.location.href = 'login_empleado.html';
